@@ -21,22 +21,17 @@ async fn main() -> Result<()> {
     );
 
     loop {
-        match chain.as_str() {
-            "ethereum" => match fetcher::ethereum::fetch_latest_block(&client, &endpoint).await {
-                Ok(Some(block)) => {
-                    let num = block.number.unwrap_or_default();
-                    let hash = block.hash.unwrap_or_else(|| "<none>".to_string());
-                    println!("Latest block (ethereum): number={}, hash={}", num, hash);
-                }
-                Ok(None) => {
-                    eprintln!("No latest block returned by provider (ethereum)");
-                }
-                Err(e) => {
-                    eprintln!("Error fetching latest block (ethereum): {e}");
-                }
-            },
-            other => {
-                eprintln!("Unsupported chain '{}'. Supported: ethereum.", other);
+        match fetcher::fetch_latest_block(&client, &endpoint, &chain).await {
+            Ok(Some(block)) => {
+                let num = block.number.unwrap_or_default();
+                let hash = block.hash.unwrap_or_else(|| "<none>".to_string());
+                println!("Latest block ({}): number={}, hash={}", chain, num, hash);
+            }
+            Ok(None) => {
+                eprintln!("No latest block returned by provider ({})", chain);
+            }
+            Err(e) => {
+                eprintln!("Error fetching latest block ({}): {e}", chain);
             }
         }
 

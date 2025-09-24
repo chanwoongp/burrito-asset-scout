@@ -1,30 +1,8 @@
 use anyhow::{anyhow, Result};
 use reqwest::Client;
-use serde::Deserialize;
 
+use crate::types::{BlockMinimal, JsonRpcResponse};
 use crate::BlockHeader;
-
-#[derive(Debug, Deserialize)]
-struct JsonRpcResponse<T> {
-    #[allow(unused)]
-    jsonrpc: Option<String>,
-    result: Option<T>,
-    error: Option<JsonRpcError>,
-    #[allow(unused)]
-    id: Option<serde_json::Value>,
-}
-
-#[derive(Debug, Deserialize)]
-struct JsonRpcError {
-    code: i64,
-    message: String,
-}
-
-#[derive(Debug, Deserialize)]
-struct BlockMinimal {
-    number: Option<String>,
-    hash: Option<String>,
-}
 
 fn parse_hex_u64(s: &str) -> Result<u64> {
     let s = s.strip_prefix("0x").unwrap_or(s);
