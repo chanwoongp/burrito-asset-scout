@@ -1,10 +1,10 @@
 [package]
-name = "fetcher"
+name = "provider"
 version = "0.1.0"
 edition = "2024"
 
 [lib]
-name = "fetcher"
+name = "provider"
 path = "src/lib.rs"
 
 [dependencies]

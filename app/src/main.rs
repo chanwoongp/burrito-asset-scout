@@ -21,7 +21,7 @@ async fn main() -> Result<()> {
     );
 
     loop {
-        match fetcher::fetch_latest_block(&client, &endpoint, &chain).await {
+        match provider::fetch_latest_block(&client, &endpoint, &chain).await {
             Ok(Some(block)) => {
                 let num = block.number.unwrap_or_default();
                 let hash = block.hash.unwrap_or_else(|| "<none>".to_string());

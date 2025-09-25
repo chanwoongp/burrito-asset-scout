@@ -7,4 +7,4 @@ edition = "2024"
 anyhow = "1"
 reqwest = { version = "0.12.23", features = ["json", "rustls-tls"] }
 tokio = { version = "1", features = ["full"] }
-fetcher = { path = "../fetcher" }
+provider = { path = "../provider" }
