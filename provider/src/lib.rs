@@ -1,8 +1,11 @@
 pub mod ethereum;
 pub mod types;
 
+pub use ethereum::Ethereum;
+
 use anyhow::{anyhow, Result};
 use reqwest::Client;
+use std::future::Future;
 
 #[derive(Debug)]
 pub struct BlockHeader {
@@ -10,8 +13,12 @@ pub struct BlockHeader {
     pub hash: Option<String>,
 }
 
-/// Fetch latest block header for the specified chain.
-/// Currently supports: "ethereum".
+pub trait Rpc {
+    fn fetch_latest_block(&self, client: &Client, endpoint: &str) -> impl Future<Output = Result<Option<BlockHeader>>> + Send;
+}
+
+/// Fetch the latest block header for the specified chain.
+/// Currently, supports: "ethereum".
 pub async fn fetch_latest_block(
     client: &Client,
     endpoint: &str,
