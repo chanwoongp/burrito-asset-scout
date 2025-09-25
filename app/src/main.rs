@@ -1,4 +1,5 @@
 use anyhow::Result;
+use provider::{Ethereum, Rpc};
 use reqwest::Client;
 use std::env;
 use std::time::Duration;
@@ -14,6 +15,7 @@ async fn main() -> Result<()> {
     });
 
     let client = Client::builder().build()?;
+    let ethereum = Ethereum;
 
     println!(
         "Starting periodic JSON-RPC calls for chain '{}' to {} (every 10s)...",
@@ -21,7 +23,7 @@ async fn main() -> Result<()> {
     );
 
     loop {
-        match provider::fetch_latest_block(&client, &endpoint, &chain).await {
+        match ethereum.fetch_latest_block(&client, &endpoint).await {
             Ok(Some(block)) => {
                 let num = block.number.unwrap_or_default();
                 let hash = block.hash.unwrap_or_else(|| "<none>".to_string());
