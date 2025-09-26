@@ -3,7 +3,7 @@ pub mod types;
 
 pub use ethereum::Ethereum;
 
-use anyhow::{anyhow, Result};
+use anyhow::{Result};
 use reqwest::Client;
 use std::future::Future;
 
