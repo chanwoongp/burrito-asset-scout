@@ -16,16 +16,3 @@ pub struct BlockHeader {
 pub trait Rpc {
     fn fetch_latest_block(&self, client: &Client, endpoint: &str) -> impl Future<Output = Result<Option<BlockHeader>>> + Send;
 }
-
-/// Fetch the latest block header for the specified chain.
-/// Currently, supports: "ethereum".
-pub async fn fetch_latest_block(
-    client: &Client,
-    endpoint: &str,
-    chain: &str,
-) -> Result<Option<BlockHeader>> {
-    match chain {
-        "ethereum" => ethereum::fetch_latest_block(client, endpoint).await,
-        other => Err(anyhow!("Unsupported chain '{}'", other)),
-    }
-}
