@@ -1,5 +1,5 @@
 use anyhow::Result;
-use provider::{Ethereum, Rpc};
+use provider::{Config, Ethereum, Rpc};
 use std::env;
 use std::time::Duration;
 
@@ -13,7 +13,8 @@ async fn main() -> Result<()> {
         "https://ethereum-mainnet.g.allthatnode.com/full/evm/cd69347a2bef449a96e00d2c38ae2f64".to_string()
     });
 
-    let ethereum = Ethereum::new()?;
+    let config = Config::new(endpoint.clone());
+    let ethereum = Ethereum::new(config)?;
 
     println!(
         "Starting periodic JSON-RPC calls for chain '{}' to {} (every 10s)...",
@@ -21,7 +22,7 @@ async fn main() -> Result<()> {
     );
 
     loop {
-        match ethereum.fetch_latest_block(&endpoint).await {
+        match ethereum.fetch_latest_block().await {
             Ok(Some(block)) => {
                 let num = block.number.unwrap_or_default();
                 let hash = block.hash.unwrap_or_else(|| "<none>".to_string());

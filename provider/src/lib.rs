@@ -1,7 +1,7 @@
 pub mod ethereum;
 pub mod types;
 
-pub use ethereum::Ethereum;
+pub use ethereum::{Config, Ethereum};
 
 use anyhow::{Result};
 use std::future::Future;
@@ -13,5 +13,5 @@ pub struct BlockHeader {
 }
 
 pub trait Rpc {
-    fn fetch_latest_block(&self, endpoint: &str) -> impl Future<Output = Result<Option<BlockHeader>>> + Send;
+    fn fetch_latest_block(&self) -> impl Future<Output = Result<Option<BlockHeader>>> + Send;
 }
