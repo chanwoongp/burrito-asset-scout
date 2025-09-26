@@ -6,7 +6,16 @@ use crate::types::{BlockMinimal, JsonRpcResponse};
 use crate::{BlockHeader, Rpc};
 
 #[derive(Debug)]
-pub struct Ethereum;
+pub struct Ethereum {
+    client: Client,
+}
+
+impl Ethereum {
+    pub fn new() -> Result<Self> {
+        let client = Client::builder().build()?;
+        Ok(Self { client })
+    }
+}
 
 fn parse_hex_u64(s: &str) -> Result<u64> {
     let s = s.strip_prefix("0x").unwrap_or(s);
@@ -15,7 +24,7 @@ fn parse_hex_u64(s: &str) -> Result<u64> {
 
 
 impl Rpc for Ethereum {
-    async fn fetch_latest_block(&self, client: &Client, endpoint: &str) -> Result<Option<BlockHeader>> {
+    async fn fetch_latest_block(&self, endpoint: &str) -> Result<Option<BlockHeader>> {
         let body = serde_json::json!({
             "jsonrpc": "2.0",
             "method": "eth_getBlockByNumber",
@@ -23,7 +32,7 @@ impl Rpc for Ethereum {
             "id": 0
         });
 
-        let resp = client.post(endpoint).json(&body).send().await?;
+        let resp = self.client.post(endpoint).json(&body).send().await?;
 
         if !resp.status().is_success() {
             return Err(anyhow!("HTTP error: {}", resp.status()));

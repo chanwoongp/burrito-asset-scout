@@ -4,7 +4,6 @@ pub mod types;
 pub use ethereum::Ethereum;
 
 use anyhow::{Result};
-use reqwest::Client;
 use std::future::Future;
 
 #[derive(Debug)]
@@ -14,5 +13,5 @@ pub struct BlockHeader {
 }
 
 pub trait Rpc {
-    fn fetch_latest_block(&self, client: &Client, endpoint: &str) -> impl Future<Output = Result<Option<BlockHeader>>> + Send;
+    fn fetch_latest_block(&self, endpoint: &str) -> impl Future<Output = Result<Option<BlockHeader>>> + Send;
 }
