@@ -1,18 +1,37 @@
-use anyhow::Result;
+use anyhow::{Context, Result};
 use provider::{Config, Ethereum, Rpc};
+use serde::Deserialize;
 use std::env;
+use std::fs;
 use std::time::Duration;
+
+#[derive(Debug, Deserialize)]
+struct AppConfig {
+    ethereum: EthereumConfig,
+}
+
+#[derive(Debug, Deserialize)]
+struct EthereumConfig {
+    rpc: RpcConfig,
+}
+
+#[derive(Debug, Deserialize)]
+struct RpcConfig {
+    url: String,
+}
 
 #[tokio::main]
 async fn main() -> Result<()> {
     // Select blockchain via env var; default to ethereum for now.
     let chain = env::var("BLOCKCHAIN").unwrap_or_else(|_| "ethereum".to_string());
 
-    // Endpoint can be configured via env var; falls back to the provided default for Ethereum.
-    let endpoint = env::var("RPC_ENDPOINT").unwrap_or_else(|_| {
-        "https://ethereum-mainnet.g.allthatnode.com/full/evm/cd69347a2bef449a96e00d2c38ae2f64".to_string()
-    });
+    // Read config from YAML file
+    let config_content = fs::read_to_string("config_local.yml")
+        .context("Failed to read config_local.yml")?;
+    let app_config: AppConfig = serde_yaml::from_str(&config_content)
+        .context("Failed to parse config_local.yml")?;
 
+    let endpoint = app_config.ethereum.rpc.url;
     let config = Config::new(endpoint.clone());
     let ethereum = Ethereum::new(config)?;
 
