@@ -1,9 +1,11 @@
+mod types;
+
 use anyhow::{anyhow, Result};
 use reqwest::Client;
 use serde_json;
-
-use crate::types::{BlockMinimal, JsonRpcResponse};
-use crate::{BlockHeader, Rpc};
+use crate::ethereum::types::RawBlockHeader;
+use crate::Rpc;
+use crate::types::{BlockHeader, JsonRpcResponse};
 
 #[derive(Debug, Clone)]
 pub struct Config {
@@ -50,7 +52,7 @@ impl Rpc for Ethereum {
             return Err(anyhow!("HTTP error: {}", resp.status()));
         }
 
-        let rpc: JsonRpcResponse<BlockMinimal> = resp.json().await?;
+        let rpc: JsonRpcResponse<RawBlockHeader> = resp.json().await?;
 
         if let Some(err) = rpc.error {
             return Err(anyhow!("JSON-RPC error {}: {}", err.code, err.message));

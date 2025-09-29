@@ -16,8 +16,9 @@ pub struct JsonRpcError {
     pub message: String,
 }
 
-#[derive(Debug, Deserialize)]
-pub struct BlockMinimal {
-    pub number: Option<String>,
+// Struct for internal use after parsing values from the wire format.
+#[derive(Debug)]
+pub struct BlockHeader {
+    pub number: Option<u64>,
     pub hash: Option<String>,
 }
