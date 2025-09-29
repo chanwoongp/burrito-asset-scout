@@ -1,9 +1,10 @@
 pub mod ethereum;
 pub mod types;
 
-pub use ethereum::{Config, Ethereum};
+pub use types::Config;
+pub use ethereum::Ethereum;
 
-use anyhow::{Result};
+use anyhow::Result;
 use std::future::Future;
 use crate::types::BlockHeader;
 

@@ -1,5 +1,16 @@
 use serde::Deserialize;
 
+#[derive(Debug, Clone)]
+pub struct Config {
+    pub endpoint: String,
+}
+
+impl Config {
+    pub fn new(endpoint: String) -> Self {
+        Self { endpoint }
+    }
+}
+
 #[derive(Debug, Deserialize)]
 pub struct JsonRpcResponse<T> {
     #[allow(unused)]

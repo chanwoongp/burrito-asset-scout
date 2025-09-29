@@ -5,18 +5,7 @@ use reqwest::Client;
 use serde_json;
 use crate::ethereum::types::GetBlockNumberResponse;
 use crate::Rpc;
-use crate::types::{BlockHeader, JsonRpcResponse};
-
-#[derive(Debug, Clone)]
-pub struct Config {
-    pub endpoint: String,
-}
-
-impl Config {
-    pub fn new(endpoint: String) -> Self {
-        Self { endpoint }
-    }
-}
+use crate::types::{BlockHeader, JsonRpcResponse, Config};
 
 #[derive(Debug)]
 pub struct Ethereum {
