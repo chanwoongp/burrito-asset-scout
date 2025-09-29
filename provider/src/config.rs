@@ -14,4 +14,5 @@ pub struct ChainProvider {
 #[derive(Debug, Deserialize, Clone)]
 pub struct Providers {
     pub ethereum: ChainProvider,
+    pub solana: ChainProvider,
 }

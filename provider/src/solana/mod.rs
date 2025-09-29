@@ -1,0 +1,56 @@
+mod types;
+
+use anyhow::{anyhow, Result};
+use reqwest::Client;
+use serde_json;
+use crate::solana::types::GetLatestBlockhashResponse;
+use crate::Rpc;
+use crate::types::{BlockHeader, JsonRpcResponse, Config};
+
+#[derive(Debug)]
+pub struct Solana {
+    client: Client,
+    config: Config,
+}
+
+impl Solana {
+    pub fn new(config: Config) -> Result<Self> {
+        let client = Client::builder().build()?;
+        Ok(Self { client, config })
+    }
+}
+
+impl Rpc for Solana {
+    async fn fetch_latest_block(&self) -> Result<Option<BlockHeader>> {
+        let body = serde_json::json!({
+            "jsonrpc": "2.0",
+            "method": "getLatestBlockhash",
+            "params": [{
+                "commitment":"finalized"
+            }],
+            "id": 0
+        });
+        let resp = self.client.post(&self.config.endpoint).json(&body).send().await?;
+
+        if !resp.status().is_success() {
+            return Err(anyhow!("HTTP error: {}", resp.status()));
+        }
+
+        let rpc: JsonRpcResponse<GetLatestBlockhashResponse> = resp.json().await?;
+
+        if let Some(err) = rpc.error {
+            return Err(anyhow!("JSON-RPC error {}: {}", err.code, err.message));
+        }
+
+        match rpc.result {
+            None => Ok(None),
+            Some(b) => {
+                let number = Some(b.context.slot);
+                let hash = Some(b.value.blockhash);
+                let header = BlockHeader { number, hash };
+                Ok(Some(header))
+            }
+        }
+    }
+}
+
