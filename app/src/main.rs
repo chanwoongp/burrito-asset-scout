@@ -1,6 +1,5 @@
 use anyhow::Result;
-use provider::{Config, Ethereum, Rpc};
-use provider::solana::Solana;
+use provider::new_rpc;
 use std::time::Duration;
 use clap::Parser;
 
@@ -13,11 +12,6 @@ struct Cli {
     chain: String,
 }
 
-enum ProviderClient {
-    Ethereum(Ethereum),
-    Solana(Solana),
-}
-
 #[tokio::main]
 async fn main() -> Result<()> {
     // Parse command line with clap (requires --chain/-c)
@@ -27,22 +21,11 @@ async fn main() -> Result<()> {
     // Read config from YAML file via separate module
     let app_config = crate::config::load_app_config("config_local.yml")?;
 
-    // Select endpoint and client by chain
-    let (endpoint, client) = match chain.as_str() {
-        "ethereum" => {
-            let endpoint = app_config.provider.ethereum.rpc.url;
-            let config = Config::new(endpoint.clone());
-            let eth = Ethereum::new(config)?;
-            (endpoint, ProviderClient::Ethereum(eth))
-        }
-        "solana" => {
-            let endpoint = app_config.provider.solana.rpc.url;
-            let config = Config::new(endpoint.clone());
-            let sol = Solana::new(config)?;
-            (endpoint, ProviderClient::Solana(sol))
-        }
-        other => {
-            eprintln!("Unsupported blockchain: {}. Supported: 'ethereum', 'solana'", other);
+    // Select endpoint and client by chain via provider factory
+    let (endpoint, client) = match new_rpc(&chain, &app_config.provider) {
+        Ok(v) => v,
+        Err(e) => {
+            eprintln!("{}", e);
             return Ok(());
         }
     };
@@ -53,10 +36,7 @@ async fn main() -> Result<()> {
     );
 
     loop {
-        let res = match &client {
-            ProviderClient::Ethereum(eth) => eth.fetch_latest_block().await,
-            ProviderClient::Solana(sol) => sol.fetch_latest_block().await,
-        };
+        let res = client.fetch_latest_block().await;
 
         match res {
             Ok(Some(block)) => {

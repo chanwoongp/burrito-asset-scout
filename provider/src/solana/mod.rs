@@ -6,6 +6,7 @@ use serde_json;
 use crate::solana::types::GetLatestBlockhashResponse;
 use crate::Rpc;
 use crate::types::{BlockHeader, JsonRpcResponse, Config};
+use async_trait::async_trait;
 
 #[derive(Debug)]
 pub struct Solana {
@@ -20,6 +21,7 @@ impl Solana {
     }
 }
 
+#[async_trait]
 impl Rpc for Solana {
     async fn fetch_latest_block(&self) -> Result<Option<BlockHeader>> {
         let body = serde_json::json!({

@@ -6,6 +6,7 @@ use serde_json;
 use crate::ethereum::types::GetBlockNumberResponse;
 use crate::Rpc;
 use crate::types::{BlockHeader, JsonRpcResponse, Config};
+use async_trait::async_trait;
 
 #[derive(Debug)]
 pub struct Ethereum {
@@ -26,6 +27,7 @@ fn parse_hex_u64(s: &str) -> Result<u64> {
 }
 
 
+#[async_trait]
 impl Rpc for Ethereum {
     async fn fetch_latest_block(&self) -> Result<Option<BlockHeader>> {
         let body = serde_json::json!({
