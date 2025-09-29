@@ -1,25 +1,11 @@
 use anyhow::{Context, Result};
 use serde::Deserialize;
 use std::fs;
+use provider::config::Providers;
 
 #[derive(Debug, Deserialize)]
 pub struct AppConfig {
     pub provider: Providers,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct Providers {
-    pub ethereum: EthereumConfig,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct EthereumConfig {
-    pub rpc: RpcConfig,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct RpcConfig {
-    pub url: String,
 }
 
 pub fn load_app_config(path: &str) -> Result<AppConfig> {

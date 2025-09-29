@@ -1,44 +1,22 @@
 use anyhow::Result;
 use provider::{Config, Ethereum, Rpc};
-use std::env;
 use std::time::Duration;
+use clap::Parser;
 
 mod config;
 
+#[derive(Debug, Parser)]
+#[command(name = "burrito-asset-scout")]
+struct Cli {
+    #[arg(short, long, value_name = "CHAIN", help = "Blockchain to use (e.g., ethereum)", required = true)]
+    chain: String,
+}
+
 #[tokio::main]
 async fn main() -> Result<()> {
-    // Support both: positional arg (e.g., `app ethereum`) and flag form (e.g., `--chain=ethereum` or `--chain ethereum`).
-    let args: Vec<String> = env::args().collect();
-
-    // Parse chain from args
-    let mut chain: Option<String> = None;
-    let mut i = 1; // skip program name
-    while i < args.len() {
-        let arg = &args[i];
-        if arg == "--chain" {
-            if i + 1 < args.len() {
-                chain = Some(args[i + 1].clone());
-                i += 1; // consume value
-            }
-        } else if let Some(rest) = arg.strip_prefix("--chain=") {
-            chain = Some(rest.to_string());
-        } else if !arg.starts_with('-') && chain.is_none() {
-            // fallback: first positional non-flag argument
-            chain = Some(arg.clone());
-        }
-        i += 1;
-    }
-
-    let chain = match chain {
-        Some(c) => c,
-        None => {
-            let bin = args.get(0).cloned().unwrap_or_else(|| "app".to_string());
-            eprintln!(
-                "Usage:\n  {bin} --chain <blockchain>\n  {bin} <blockchain>\n\nExample:\n  {bin} --chain=ethereum\n  {bin} ethereum\n\nSupported blockchains: ethereum"
-            );
-            return Ok(());
-        }
-    };
+    // Parse command line with clap (requires --chain/-c)
+    let cli = Cli::parse();
+    let chain = cli.chain;
 
     if chain != "ethereum" {
         eprintln!("Unsupported blockchain: {}. Only 'ethereum' is supported currently.", chain);

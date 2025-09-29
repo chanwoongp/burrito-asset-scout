@@ -1,8 +1,10 @@
 pub mod ethereum;
 pub mod types;
+pub mod config;
 
 pub use types::Config;
 pub use ethereum::Ethereum;
+pub use config::Providers;
 
 use anyhow::Result;
 use std::future::Future;
