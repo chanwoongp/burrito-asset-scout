@@ -1,5 +1,4 @@
 mod types;
-pub mod config;
 
 use anyhow::{anyhow, Result};
 use reqwest::Client;
