@@ -3,7 +3,7 @@ mod types;
 use anyhow::{anyhow, Result};
 use reqwest::Client;
 use serde_json;
-use crate::ethereum::types::RawBlockHeader;
+use crate::ethereum::types::GetBlockNumberResponse;
 use crate::Rpc;
 use crate::types::{BlockHeader, JsonRpcResponse};
 
@@ -52,7 +52,7 @@ impl Rpc for Ethereum {
             return Err(anyhow!("HTTP error: {}", resp.status()));
         }
 
-        let rpc: JsonRpcResponse<RawBlockHeader> = resp.json().await?;
+        let rpc: JsonRpcResponse<GetBlockNumberResponse> = resp.json().await?;
 
         if let Some(err) = rpc.error {
             return Err(anyhow!("JSON-RPC error {}: {}", err.code, err.message));
