@@ -1,29 +1,9 @@
-use anyhow::{Context, Result};
+use anyhow::Result;
 use provider::{Config, Ethereum, Rpc};
-use serde::Deserialize;
 use std::env;
-use std::fs;
 use std::time::Duration;
 
-#[derive(Debug, Deserialize)]
-struct AppConfig {
-    provider: Providers,
-}
-
-#[derive(Debug, Deserialize)]
-struct Providers {
-    ethereum: EthereumConfig,
-}
-
-#[derive(Debug, Deserialize)]
-struct EthereumConfig {
-    rpc: RpcConfig,
-}
-
-#[derive(Debug, Deserialize)]
-struct RpcConfig {
-    url: String,
-}
+mod config;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -65,11 +45,8 @@ async fn main() -> Result<()> {
         return Ok(());
     }
 
-    // Read config from YAML file
-    let config_content = fs::read_to_string("config_local.yml")
-        .context("Failed to read config_local.yml")?;
-    let app_config: AppConfig = serde_yaml::from_str(&config_content)
-        .context("Failed to parse config_local.yml")?;
+    // Read config from YAML file via separate module
+    let app_config = crate::config::load_app_config("config_local.yml")?;
 
     let endpoint = app_config.provider.ethereum.rpc.url;
     let config = Config::new(endpoint.clone());
