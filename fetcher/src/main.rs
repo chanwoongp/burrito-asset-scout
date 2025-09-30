@@ -20,10 +20,10 @@ async fn main() -> Result<()> {
     let cli = Cli::parse();
 
     let config_path = cli.config.to_lowercase();
-    let app_config = crate::config::load_app_config(&config_path)?;
+    let fetcher_config = crate::config::load_config(&config_path)?;
 
     let chain = cli.chain.to_lowercase();
-    let client = match new_client(&chain, &app_config.provider) {
+    let client = match new_client(&chain, &fetcher_config.provider) {
         Ok(v) => v,
         Err(e) => {
             eprintln!("{}", e);
