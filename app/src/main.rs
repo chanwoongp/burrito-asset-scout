@@ -8,20 +8,21 @@ mod config;
 #[derive(Debug, Parser)]
 #[command(name = "burrito-asset-scout")]
 struct Cli {
+    #[arg(short, long, value_name = "CONFIG", help = "Configuration file path", required = true)]
+    config: String,
+
     #[arg(short, long, value_name = "CHAIN", help = "Blockchain to use (e.g., ethereum, solana)", required = true)]
     chain: String,
 }
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    // Parse command line with clap (requires --chain/-c)
     let cli = Cli::parse();
+
+    let config_path = cli.config.to_lowercase();
+    let app_config = crate::config::load_app_config(&config_path)?;
+
     let chain = cli.chain.to_lowercase();
-
-    // Read config from YAML file via separate module
-    let app_config = crate::config::load_app_config("config_local.yml")?;
-
-    // Select endpoint and client by chain via provider factory
     let (endpoint, client) = match new_rpc(&chain, &app_config.provider) {
         Ok(v) => v,
         Err(e) => {
