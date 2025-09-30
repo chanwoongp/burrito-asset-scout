@@ -25,6 +25,20 @@ impl Solana {
 
 #[async_trait]
 impl Rpc for Solana {
+    async fn fetch_block_info(&self, block_number: u64) -> Result<Option<crate::types::AnyBlock>> {
+        let block = crate::types::AnyBlock::Solana(crate::types::Block::<Block> {
+            metadata: BlockMetadata {
+                blockhash: "0x222".to_string(),
+                parent_lot: 0,
+                block_height: 222,
+                block_time: 0,
+                previous_blockhash: "".to_string(),
+            },
+            transactions: vec![],
+        });
+        Ok(Some(block))
+    }
+
     async fn fetch_latest_block_info(&self) -> Result<Option<BlockHeader>> {
         let body = serde_json::json!({
             "jsonrpc": "2.0",

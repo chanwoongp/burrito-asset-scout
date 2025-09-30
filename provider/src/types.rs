@@ -2,7 +2,7 @@ use serde::Deserialize;
 use std::fmt;
 use std::str::FromStr;
 use anyhow::anyhow;
-use crate::{ethereum, solana};
+use crate::{ethereum, solana, types};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
 #[serde(rename_all = "lowercase")]

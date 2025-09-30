@@ -41,9 +41,8 @@ async fn main() -> Result<()> {
     };
 
     loop {
-        let res = provider.fetch_latest_block_info().await;
-
-        match res {
+        let res_block_header = provider.fetch_latest_block_info().await;
+        match res_block_header {
             Ok(Some(block)) => {
                 let num = block.number.unwrap_or_default();
                 let hash = block.hash.unwrap_or_else(|| "<none>".to_string());
@@ -54,6 +53,26 @@ async fn main() -> Result<()> {
             }
             Err(e) => {
                 eprintln!("Error fetching latest block ({}): {e}", chain_str);
+            }
+        }
+
+        let res_block_info = provider.fetch_block_info(100).await;
+        match res_block_info {
+            Ok(Some(block)) => {
+                match block {
+                    provider::types::AnyBlock::Ethereum(b) => {
+                        println!("Block 100: {:?}", b.metadata.hash);
+                    }
+                    provider::types::AnyBlock::Solana(b) => {
+                        println!("Block 100: {:?}", b.metadata.blockhash);
+                    }
+                }
+            }
+            Ok(None) => {
+                eprintln!("No block 100 returned by provider ({})", chain_str);
+            }
+            Err(e) => {
+                eprintln!("Error fetching block 100 ({}): {e}", chain_str);
             }
         }
 
