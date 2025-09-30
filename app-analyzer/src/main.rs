@@ -1,5 +1,6 @@
 use anyhow::Result;
-use provider::new_client;
+use provider::{new_client, Chain};
+use std::str::FromStr;
 use std::time::Duration;
 use clap::Parser;
 
@@ -22,8 +23,16 @@ async fn main() -> Result<()> {
     let config_path = cli.config.to_lowercase();
     let fetcher_config = crate::config::load_config(&config_path)?;
 
-    let chain = cli.chain.to_lowercase();
-    let client = match new_client(&chain, &fetcher_config.provider) {
+    let chain_str = cli.chain.to_lowercase();
+    let chain = match Chain::from_str(&chain_str) {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("{}", e);
+            return Ok(());
+        }
+    };
+
+    let client = match new_client(chain, &fetcher_config.provider) {
         Ok(v) => v,
         Err(e) => {
             eprintln!("{}", e);

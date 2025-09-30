@@ -3,28 +3,27 @@ pub mod solana;
 pub mod types;
 pub mod config;
 
-pub use types::Config;
+pub use types::{Chain, Config};
 pub use config::Providers;
 
-use anyhow::{Result, anyhow};
+use anyhow::Result;
 use crate::types::BlockHeader;
 use async_trait::async_trait;
 
-pub fn new_client(chain: &str, providers: &Providers) -> Result<Box<dyn Rpc + Send + Sync>> {
+pub fn new_client(chain: Chain, providers: &Providers) -> Result<Box<dyn Rpc + Send + Sync>> {
     match chain {
-        "ethereum" => {
+        Chain::Ethereum => {
             let endpoint = providers.ethereum.rpc.url.clone();
             let config = Config::new(endpoint.clone());
             let eth = ethereum::Ethereum::new(config)?;
             Ok(Box::new(eth))
         }
-        "solana" => {
+        Chain::Solana => {
             let endpoint = providers.solana.rpc.url.clone();
             let config = Config::new(endpoint.clone());
             let sol = solana::Solana::new(config)?;
             Ok(Box::new(sol))
         }
-        other => Err(anyhow!("Unsupported blockchain: {}. Supported: 'ethereum', 'solana'", other)),
     }
 }
 

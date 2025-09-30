@@ -1,4 +1,35 @@
 use serde::Deserialize;
+use std::fmt;
+use std::str::FromStr;
+use anyhow::anyhow;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum Chain {
+    Ethereum,
+    Solana,
+}
+
+impl fmt::Display for Chain {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", match self {
+            Chain::Ethereum => "ethereum",
+            Chain::Solana => "solana",
+        })
+    }
+}
+
+impl FromStr for Chain {
+    type Err = anyhow::Error;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "ethereum" => Ok(Chain::Ethereum),
+            "solana" => Ok(Chain::Solana),
+            other => Err(anyhow!("Unsupported chain: '{}'", other)),
+        }
+    }
+}
 
 #[derive(Debug, Clone)]
 pub struct Config {
