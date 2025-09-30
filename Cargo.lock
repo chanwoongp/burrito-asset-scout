@@ -74,6 +74,32 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a23eb6b1614318a8071c9b2521f36b424b2c83db5eb3a0fead4a6c0809af6e61"
 
 [[package]]
+name = "app-analyzer"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "provider",
+ "reqwest",
+ "serde",
+ "serde_yaml",
+ "tokio",
+]
+
+[[package]]
+name = "app-fetcher"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "provider",
+ "reqwest",
+ "serde",
+ "serde_yaml",
+ "tokio",
+]
+
+[[package]]
 name = "async-trait"
 version = "0.1.89"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -128,19 +154,6 @@ name = "bumpalo"
 version = "3.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "46c5e41b57b8bba42a04676d81cb89e9ee8e859a1a66f80a5a72e1cb76b34d43"
-
-[[package]]
-name = "burrito-asset-scout"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "clap",
- "provider",
- "reqwest",
- "serde",
- "serde_yaml",
- "tokio",
-]
 
 [[package]]
 name = "bytes"

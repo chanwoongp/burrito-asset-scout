@@ -6,7 +6,7 @@ use clap::Parser;
 mod config;
 
 #[derive(Debug, Parser)]
-#[command(name = "burrito-asset-scout")]
+#[command(name = "fetcher")]
 struct Cli {
     #[arg(short, long, value_name = "CONFIG", help = "Configuration file path", required = true)]
     config: String,
