@@ -3,8 +3,8 @@ use analyzer::get_analyzer;
 #[test]
 fn test_get_analyzer() {
     let analyzers_to_test = vec![
-        ("native_coin_transfer", "ethereum"),
-        ("native_coin_transfer", "solana"),
+        ("coin_transfer", "ethereum"),
+        ("coin_transfer", "solana"),
         ("token_transfer", "ethereum"),
         ("token_transfer", "solana"),
     ];

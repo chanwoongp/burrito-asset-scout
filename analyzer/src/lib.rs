@@ -1,8 +1,8 @@
-pub mod native_coin_transfer;
+pub mod coin_transfer;
 pub mod token_transfer;
 
-use native_coin_transfer::ethereum::EthereumNativeCoinTransfer;
-use native_coin_transfer::solana::SolanaNativeCoinTransfer;
+use coin_transfer::ethereum::EthereumNativeCoinTransfer;
+use coin_transfer::solana::SolanaNativeCoinTransfer;
 use token_transfer::ethereum::EthereumTokenTransfer;
 use token_transfer::solana::SolanaTokenTransfer;
 
@@ -12,7 +12,7 @@ pub trait Analyzer {
 
 pub fn get_analyzer(analyzer_type: &str, chain: &str) -> Option<Box<dyn Analyzer>> {
     match analyzer_type {
-        "native_coin_transfer" => match chain {
+        "coin_transfer" => match chain {
             "ethereum" => Some(Box::new(EthereumNativeCoinTransfer {})),
             "solana" => Some(Box::new(SolanaNativeCoinTransfer {})),
             _ => None,
