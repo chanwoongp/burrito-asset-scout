@@ -70,3 +70,8 @@ pub enum BlockMetadata {
     Ethereum(ethereum::BlockMetadata),
     Solana(solana::BlockMetadata),
 }
+
+pub enum Transaction {
+    Ethereum(ethereum::Transaction),
+    Solana(solana::Transaction),
+}
