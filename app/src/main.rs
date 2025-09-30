@@ -1,5 +1,5 @@
 use anyhow::Result;
-use provider::new_rpc;
+use provider::new_client;
 use std::time::Duration;
 use clap::Parser;
 
@@ -23,18 +23,13 @@ async fn main() -> Result<()> {
     let app_config = crate::config::load_app_config(&config_path)?;
 
     let chain = cli.chain.to_lowercase();
-    let (endpoint, client) = match new_rpc(&chain, &app_config.provider) {
+    let client = match new_client(&chain, &app_config.provider) {
         Ok(v) => v,
         Err(e) => {
             eprintln!("{}", e);
             return Ok(());
         }
     };
-
-    println!(
-        "Starting periodic JSON-RPC calls for chain '{}' to {} (every 10s)...",
-        chain, endpoint
-    );
 
     loop {
         let res = client.fetch_latest_block().await;
@@ -53,6 +48,6 @@ async fn main() -> Result<()> {
             }
         }
 
-        tokio::time::sleep(Duration::from_secs(5)).await;
+        tokio::time::sleep(Duration::from_secs(3)).await;
     }
 }
