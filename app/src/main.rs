@@ -11,7 +11,7 @@ struct Cli {
     #[arg(short, long, value_name = "CONFIG", help = "Configuration file path", required = true)]
     config: String,
 
-    #[arg(short, long, value_name = "CHAIN", help = "Blockchain to use (e.g., ethereum, solana)", required = true)]
+    #[arg(long, value_name = "CHAIN", help = "Blockchain to use (e.g., ethereum, solana)", required = true)]
     chain: String,
 }
 
