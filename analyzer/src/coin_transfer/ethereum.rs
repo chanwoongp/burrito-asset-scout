@@ -4,6 +4,6 @@ pub struct EthereumNativeCoinTransfer;
 
 impl Analyzer for EthereumNativeCoinTransfer {
     fn analyze(&self) {
-        println!("hello, world from ethereum native coin transfer analyzer");
+        println!("hello, world from ethereum coin transfer analyzer");
     }
 }
