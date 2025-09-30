@@ -21,7 +21,7 @@ async fn main() -> Result<()> {
     let cli = Cli::parse();
 
     let config_path = cli.config.to_lowercase();
-    let fetcher_config = crate::config::load_config(&config_path)?;
+    let fetcher_config = config::load_config(&config_path)?;
 
     let chain_str = cli.chain.to_lowercase();
     let chain = match Chain::from_str(&chain_str) {

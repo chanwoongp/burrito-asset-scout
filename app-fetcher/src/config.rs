@@ -1,11 +1,11 @@
 use anyhow::{Context, Result};
 use serde::Deserialize;
 use std::fs;
-use provider::config::Providers;
+use provider::config;
 
 #[derive(Debug, Deserialize)]
 pub struct FetcherConfig {
-    pub provider: Providers,
+    pub provider: config::Providers,
 }
 
 pub fn load_config(path: &str) -> Result<FetcherConfig> {
