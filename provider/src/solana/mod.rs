@@ -25,7 +25,7 @@ impl Solana {
 
 #[async_trait]
 impl Rpc for Solana {
-    async fn fetch_block_info(&self, block_number: u64) -> Result<Option<crate::types::AnyBlock>> {
+    async fn fetch_block_info(&self, _block_number: u64) -> Result<Option<crate::types::AnyBlock>> {
         let block = crate::types::AnyBlock::Solana(crate::types::Block::<Block> {
             metadata: BlockMetadata {
                 blockhash: "0x222".to_string(),

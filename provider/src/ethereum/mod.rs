@@ -6,7 +6,7 @@ use anyhow::{anyhow, Result};
 use reqwest::Client;
 use serde_json;
 use crate::ethereum::types::GetBlockNumberResponse;
-use crate::{ethereum, Rpc};
+use crate::{Rpc};
 use crate::types::{BlockHeader, JsonRpcResponse, Config};
 use async_trait::async_trait;
 
@@ -31,7 +31,7 @@ fn parse_hex_u64(s: &str) -> Result<u64> {
 
 #[async_trait]
 impl Rpc for Ethereum {
-    async fn fetch_block_info(&self, block_number: u64) -> Result<Option<crate::types::AnyBlock>> {
+    async fn fetch_block_info(&self, _block_number: u64) -> Result<Option<crate::types::AnyBlock>> {
         let block = crate::types::AnyBlock::Ethereum(crate::types::Block::<Block> {
             metadata: BlockMetadata {
                 hash: "0x111".to_string(),
