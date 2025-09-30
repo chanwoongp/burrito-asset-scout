@@ -1,5 +1,7 @@
 mod types;
 
+pub use types::{BlockMetadata, Transaction};
+
 use anyhow::{anyhow, Result};
 use reqwest::Client;
 use serde_json;

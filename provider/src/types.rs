@@ -66,8 +66,7 @@ pub struct BlockHeader {
     pub hash: Option<String>,
 }
 
-
-pub enum Block {
-    Ethereum(ethereum::types::BlockMetadata),
-    Solana(solana::types::BlockMetadata),
+pub enum BlockMetadata {
+    Ethereum(ethereum::BlockMetadata),
+    Solana(solana::BlockMetadata),
 }
