@@ -1,12 +1,12 @@
-use analyzer::get_analyzer;
+use analyzer::{get_analyzer, AnalyzerType};
 
 #[test]
 fn test_get_analyzer() {
     let analyzers_to_test = vec![
-        ("coin_transfer", "ethereum"),
-        ("coin_transfer", "solana"),
-        ("token_transfer", "ethereum"),
-        ("token_transfer", "solana"),
+        (AnalyzerType::CoinTransfer, "ethereum"),
+        (AnalyzerType::CoinTransfer, "solana"),
+        (AnalyzerType::TokenTransfer, "ethereum"),
+        (AnalyzerType::TokenTransfer, "solana"),
     ];
 
     for (analyzer_type, chain) in analyzers_to_test {

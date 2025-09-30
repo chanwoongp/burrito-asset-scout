@@ -10,18 +10,22 @@ pub trait Analyzer {
     fn analyze(&self);
 }
 
-pub fn get_analyzer(analyzer_type: &str, chain: &str) -> Option<Box<dyn Analyzer>> {
+pub enum AnalyzerType {
+    CoinTransfer,
+    TokenTransfer,
+}
+
+pub fn get_analyzer(analyzer_type: AnalyzerType, chain: &str) -> Option<Box<dyn Analyzer>> {
     match analyzer_type {
-        "coin_transfer" => match chain {
+        AnalyzerType::CoinTransfer => match chain {
             "ethereum" => Some(Box::new(EthereumNativeCoinTransfer {})),
             "solana" => Some(Box::new(SolanaNativeCoinTransfer {})),
             _ => None,
         },
-        "token_transfer" => match chain {
+        AnalyzerType::TokenTransfer => match chain {
             "ethereum" => Some(Box::new(EthereumTokenTransfer {})),
             "solana" => Some(Box::new(SolanaTokenTransfer {})),
             _ => None,
         },
-        _ => None,
     }
 }
