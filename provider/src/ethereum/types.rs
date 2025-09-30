@@ -6,3 +6,9 @@ pub struct GetBlockNumberResponse {
     pub number: Option<String>,
     pub hash: Option<String>,
 }
+
+pub struct BlockMetadata {
+}
+
+pub struct Transaction {
+}

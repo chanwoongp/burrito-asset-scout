@@ -19,3 +19,9 @@ pub struct Value {
     //#[serde(rename = "lastValidBlockHeight")]
     //pub last_valid_block_height: u64,
 }
+
+pub struct BlockMetadata {
+}
+
+pub struct Transaction {
+}

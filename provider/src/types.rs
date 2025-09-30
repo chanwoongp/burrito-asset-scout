@@ -2,6 +2,7 @@ use serde::Deserialize;
 use std::fmt;
 use std::str::FromStr;
 use anyhow::anyhow;
+use crate::{ethereum, solana};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -63,4 +64,10 @@ pub struct JsonRpcError {
 pub struct BlockHeader {
     pub number: Option<u64>,
     pub hash: Option<String>,
+}
+
+
+pub enum Block {
+    Ethereum(ethereum::types::BlockMetadata),
+    Solana(solana::types::BlockMetadata),
 }

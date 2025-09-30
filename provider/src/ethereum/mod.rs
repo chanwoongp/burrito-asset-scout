@@ -1,4 +1,4 @@
-mod types;
+pub(crate) mod types;
 
 use anyhow::{anyhow, Result};
 use reqwest::Client;
