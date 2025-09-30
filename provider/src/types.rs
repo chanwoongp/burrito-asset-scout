@@ -59,30 +59,23 @@ pub struct JsonRpcError {
     pub message: String,
 }
 
-// Struct for internal use after parsing values from the wire format.
 #[derive(Debug)]
 pub struct BlockHeader {
     pub number: Option<u64>,
     pub hash: Option<String>,
 }
 
-pub enum BlockMetadata {
-    Ethereum(ethereum::BlockMetadata),
-    Solana(solana::BlockMetadata),
+pub trait IBlock {
+    type BlockMetadata;
+    type Transaction;
 }
 
-pub enum Transaction {
-    Ethereum(ethereum::Transaction),
-    Solana(solana::Transaction),
+pub struct Block<C: IBlock> {
+    pub metadata: C::BlockMetadata,
+    pub transactions: Vec<C::Transaction>,
 }
 
-pub enum Block {
-    Ethereum {
-        metadata: ethereum::BlockMetadata,
-        transactions: Vec<ethereum::Transaction>,
-    },
-    Solana {
-        metadata: solana::BlockMetadata,
-        transactions: Vec<solana::Transaction>,
-    },
+pub enum AnyBlock {
+    Ethereum(Block<ethereum::Block>),
+    Solana(Block<solana::Block>),
 }

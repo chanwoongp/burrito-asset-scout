@@ -1,6 +1,6 @@
 mod types;
 
-pub use types::{BlockMetadata, Transaction};
+pub use types::{BlockMetadata, Transaction, Block};
 
 use anyhow::{anyhow, Result};
 use reqwest::Client;
