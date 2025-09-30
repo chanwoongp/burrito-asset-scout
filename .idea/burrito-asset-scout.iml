@@ -7,6 +7,7 @@
       <sourceFolder url="file://$MODULE_DIR$/analyzer/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/app-analyzer/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/app-fetcher/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/analyzer/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
