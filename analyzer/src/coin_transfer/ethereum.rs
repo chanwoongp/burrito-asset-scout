@@ -1,8 +1,8 @@
 use crate::Analyzer;
 
-pub struct EthereumNativeCoinTransfer;
+pub struct EthereumCoinTransfer;
 
-impl Analyzer for EthereumNativeCoinTransfer {
+impl Analyzer for EthereumCoinTransfer {
     fn analyze(&self) {
         println!("hello, world from ethereum coin transfer analyzer");
     }

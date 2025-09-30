@@ -8,4 +8,4 @@ name = "analyzer"
 path = "src/lib.rs"
 
 [dependencies]
-
+provider = { path = "../provider" }

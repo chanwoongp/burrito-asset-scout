@@ -1,8 +1,9 @@
 pub mod coin_transfer;
 pub mod token_transfer;
 
-use coin_transfer::ethereum::EthereumNativeCoinTransfer;
-use coin_transfer::solana::SolanaNativeCoinTransfer;
+use provider::Chain;
+use coin_transfer::ethereum::EthereumCoinTransfer;
+use coin_transfer::solana::SolanaCoinTransfer;
 use token_transfer::ethereum::EthereumTokenTransfer;
 use token_transfer::solana::SolanaTokenTransfer;
 
@@ -15,17 +16,15 @@ pub enum AnalyzerType {
     TokenTransfer,
 }
 
-pub fn get_analyzer(analyzer_type: AnalyzerType, chain: &str) -> Option<Box<dyn Analyzer>> {
+pub fn get_analyzer(analyzer_type: AnalyzerType, chain: Chain) -> Option<Box<dyn Analyzer>> {
     match analyzer_type {
         AnalyzerType::CoinTransfer => match chain {
-            "ethereum" => Some(Box::new(EthereumNativeCoinTransfer {})),
-            "solana" => Some(Box::new(SolanaNativeCoinTransfer {})),
-            _ => None,
+            Chain::Ethereum => Some(Box::new(EthereumCoinTransfer {})),
+            Chain::Solana => Some(Box::new(SolanaCoinTransfer {})),
         },
         AnalyzerType::TokenTransfer => match chain {
-            "ethereum" => Some(Box::new(EthereumTokenTransfer {})),
-            "solana" => Some(Box::new(SolanaTokenTransfer {})),
-            _ => None,
+            Chain::Ethereum => Some(Box::new(EthereumTokenTransfer {})),
+            Chain::Solana => Some(Box::new(SolanaTokenTransfer {})),
         },
     }
 }
