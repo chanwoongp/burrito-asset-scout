@@ -29,5 +29,5 @@ pub fn new_provider(chain: Chain, providers: &Providers) -> Result<Box<dyn Rpc +
 
 #[async_trait]
 pub trait Rpc: Send + Sync {
-    async fn fetch_latest_block(&self) -> Result<Option<BlockHeader>>;
+    async fn fetch_latest_block_info(&self) -> Result<Option<BlockHeader>>;
 }

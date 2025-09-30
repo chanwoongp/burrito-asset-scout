@@ -25,7 +25,7 @@ impl Solana {
 
 #[async_trait]
 impl Rpc for Solana {
-    async fn fetch_latest_block(&self) -> Result<Option<BlockHeader>> {
+    async fn fetch_latest_block_info(&self) -> Result<Option<BlockHeader>> {
         let body = serde_json::json!({
             "jsonrpc": "2.0",
             "method": "getLatestBlockhash",

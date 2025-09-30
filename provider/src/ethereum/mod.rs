@@ -31,7 +31,7 @@ fn parse_hex_u64(s: &str) -> Result<u64> {
 
 #[async_trait]
 impl Rpc for Ethereum {
-    async fn fetch_latest_block(&self) -> Result<Option<BlockHeader>> {
+    async fn fetch_latest_block_info(&self) -> Result<Option<BlockHeader>> {
         let body = serde_json::json!({
             "jsonrpc": "2.0",
             "method": "eth_getBlockByNumber",

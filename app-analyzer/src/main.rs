@@ -41,7 +41,7 @@ async fn main() -> Result<()> {
     };
 
     loop {
-        let res = provider.fetch_latest_block().await;
+        let res = provider.fetch_latest_block_info().await;
 
         match res {
             Ok(Some(block)) => {
