@@ -1,5 +1,5 @@
 use anyhow::Result;
-use provider::{new_client, Chain};
+use provider::{new_provider, Chain};
 use std::str::FromStr;
 use std::time::Duration;
 use clap::Parser;
@@ -32,7 +32,7 @@ async fn main() -> Result<()> {
         }
     };
 
-    let client = match new_client(chain, &fetcher_config.provider) {
+    let provider = match new_provider(chain, &fetcher_config.provider) {
         Ok(v) => v,
         Err(e) => {
             eprintln!("{}", e);
@@ -41,7 +41,7 @@ async fn main() -> Result<()> {
     };
 
     loop {
-        let res = client.fetch_latest_block().await;
+        let res = provider.fetch_latest_block().await;
 
         match res {
             Ok(Some(block)) => {

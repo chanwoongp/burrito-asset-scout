@@ -10,7 +10,7 @@ use anyhow::Result;
 use crate::types::BlockHeader;
 use async_trait::async_trait;
 
-pub fn new_client(chain: Chain, providers: &Providers) -> Result<Box<dyn Rpc + Send + Sync>> {
+pub fn new_provider(chain: Chain, providers: &Providers) -> Result<Box<dyn Rpc + Send + Sync>> {
     match chain {
         Chain::Ethereum => {
             let endpoint = providers.ethereum.rpc.url.clone();
