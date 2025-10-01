@@ -66,7 +66,7 @@ impl Rpc for Ethereum {
             block_header: BlockHeader {
                 hash: result.hash,
                 parent_hash: result.parent_hash,
-                number: result.number.parse()?,
+                number: parse_hex_u64(&result.number)?,
             },
             transactions: vec![],
         });

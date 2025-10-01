@@ -1,14 +1,15 @@
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
 #[derive(Serialize, Deserialize)]
 pub struct GetBlockByNumberResponse {
     #[serde(rename = "baseFeePerGas")]
-    pub base_fee_per_gas: String,
+    pub base_fee_per_gas: Option<String>,
     #[serde(rename = "blobGasUsed")]
-    pub blob_gas_used: String,
+    pub blob_gas_used: Option<String>,
     pub difficulty: String,
     #[serde(rename = "excessBlobGas")]
-    pub excess_blob_gas: String,
+    pub excess_blob_gas: Option<String>,
     #[serde(rename = "extraData")]
     pub extra_data: String,
     #[serde(rename = "gasLimit")]
@@ -24,18 +25,18 @@ pub struct GetBlockByNumberResponse {
     pub nonce: String,
     pub number: String,
     #[serde(rename = "parentBeaconBlockRoot")]
-    pub parent_beacon_block_root: String,
+    pub parent_beacon_block_root: Option<String>,
     #[serde(rename = "parentHash")]
     pub parent_hash: String,
     #[serde(rename = "receiptsRoot")]
     pub receipts_root: String,
     #[serde(rename = "requestsHash")]
-    pub requests_hash: String,
+    pub requests_hash: Option<String>,
     pub size: String,
     #[serde(rename = "stateRoot")]
     pub state_root: String,
     pub timestamp: String,
-    pub transactions: Vec<GetTransactionByHashResponse>,
+    pub transactions: Value,
     #[serde(rename = "transactionsRoot")]
     pub transactions_root: String,
 }
@@ -43,31 +44,31 @@ pub struct GetBlockByNumberResponse {
 #[derive(Serialize, Deserialize)]
 pub struct GetTransactionByHashResponse {
     #[serde(rename = "blockHash")]
-    pub block_hash: String,
+    pub block_hash: Option<String>,
     #[serde(rename = "blockNumber")]
-    pub block_number: String,
+    pub block_number: Option<String>,
     pub from: String,
     pub gas: String,
     #[serde(rename = "gasPrice")]
-    pub gas_price: String,
+    pub gas_price: Option<String>,
     #[serde(rename = "maxPriorityFeePerGas")]
-    pub max_priority_fee_per_gas: String,
+    pub max_priority_fee_per_gas: Option<String>,
     #[serde(rename = "maxFeePerGas")]
-    pub max_fee_per_gas: String,
+    pub max_fee_per_gas: Option<String>,
     pub hash: String,
     pub input: String,
     pub nonce: String,
-    pub to: String,
+    pub to: Option<String>,
     #[serde(rename = "transactionIndex")]
-    pub transaction_index: String,
+    pub transaction_index: Option<String>,
     pub value: String,
     #[serde(rename = "type")]
     pub r#type: String,
     #[serde(rename = "chainId")]
-    pub chain_id: String,
+    pub chain_id: Option<String>,
     pub v: String,
     #[serde(rename = "yParity")]
-    pub y_parity: String,
+    pub y_parity: Option<String>,
     pub r: String,
     pub s: String,
 }

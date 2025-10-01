@@ -77,17 +77,17 @@ async fn main() -> Result<()> {
         match res_block_info {
             Ok(Some(block)) => match block {
                 provider::types::AnyBlockData::Ethereum(b) => {
-                    println!("Block: {:?}", b);
+                    println!("Block ({}): number={}, hash={}", chain_str, b.block_header.number, b.block_header.hash);
                 }
                 provider::types::AnyBlockData::Solana(b) => {
-                    println!("Block: {:?}", b);
+                    println!("Block ({}): block_height={}, blockhash={}", chain_str, b.block_header.block_height, b.block_header.blockhash);
                 }
             },
             Ok(None) => {
-                eprintln!("No block 100 returned by provider ({})", chain_str);
+                eprintln!("No block returned by provider ({})", chain_str);
             }
             Err(e) => {
-                eprintln!("Error fetching block 100 ({}): {e}", chain_str);
+                eprintln!("Error fetching block ({}): {e}", chain_str);
             }
         }
 
