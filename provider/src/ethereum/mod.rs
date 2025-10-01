@@ -1,14 +1,15 @@
 mod types;
+mod models;
 
 pub use types::{BlockData, BlockHeader, Transaction};
 
 use crate::Rpc;
-use crate::ethereum::types::GetBlockNumberResponse;
 use crate::types::{LatestBlockInfo, Config};
 use anyhow::{Result, anyhow};
 use async_trait::async_trait;
 use utils::json;
 use utils::json::JsonRpc;
+use crate::ethereum::models::BlockResponse;
 
 #[derive(Debug)]
 pub struct Ethereum {
@@ -20,6 +21,19 @@ impl Ethereum {
         let rpc = JsonRpc::new(config.endpoint)?;
         Ok(Self { rpc })
     }
+
+    async fn get_block_by_number(&self, n: u64, include_transaction: bool) -> Result<BlockResponse>{
+        let block_param = if n == 0 {
+            "latest".to_string()
+        } else {
+            format!("0x{:x}", n)
+        };
+        let result: BlockResponse = self
+            .rpc
+            .request("eth_getBlockByNumber", json::make_params!(block_param, include_transaction))
+            .await?;
+        Ok(result)
+    }
 }
 
 fn parse_hex_u64(s: &str) -> Result<u64> {
@@ -30,17 +44,9 @@ fn parse_hex_u64(s: &str) -> Result<u64> {
 #[async_trait]
 impl Rpc for Ethereum {
     async fn fetch_latest_block_info(&self) -> Result<Option<LatestBlockInfo>> {
-        let result: GetBlockNumberResponse = self
-            .rpc
-            .request("eth_getBlockByNumber", json::make_params!("latest", false))
-            .await?;
-
-        let number = match result.number.as_deref() {
-            Some(s) => Some(parse_hex_u64(s)?),
-            None => None,
-        };
+        let result = self.get_block_by_number(0, false).await?;
         let header = LatestBlockInfo {
-            number,
+            number: parse_hex_u64(&result.number)?,
             hash: result.hash,
         };
         Ok(Some(header))

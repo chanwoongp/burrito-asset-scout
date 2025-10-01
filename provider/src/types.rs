@@ -45,8 +45,8 @@ impl Config {
 
 #[derive(Debug)]
 pub struct LatestBlockInfo {
-    pub number: Option<u64>,
-    pub hash: Option<String>,
+    pub number: u64,
+    pub hash: String,
 }
 
 pub enum AnyBlockHeader {

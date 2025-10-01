@@ -1,15 +1,16 @@
 mod types;
+mod model;
 
 pub use types::{BlockData, BlockHeader, Transaction};
 
 use crate::Rpc;
-use crate::solana::types::GetLatestBlockHashResponse;
 use crate::types::{LatestBlockInfo, Config};
 use anyhow::Result;
 use async_trait::async_trait;
 use serde_json;
 use utils::json;
 use utils::json::JsonRpc;
+use crate::solana::model::GetLatestBlockHashResponse;
 
 #[derive(Debug)]
 pub struct Solana {
@@ -21,22 +22,24 @@ impl Solana {
         let rpc = JsonRpc::new(config.endpoint)?;
         Ok(Self { rpc })
     }
+
+    async fn get_latest_blockhash(&self) -> Result<GetLatestBlockHashResponse>{
+        let result: GetLatestBlockHashResponse = self
+            .rpc
+            .request("eth_getBlockByNumber", json::make_params!({"commitment": "finalized"}))
+            .await?;
+        Ok(result)
+    }
 }
 
 #[async_trait]
 impl Rpc for Solana {
     async fn fetch_latest_block_info(&self) -> Result<Option<LatestBlockInfo>> {
-        let result: GetLatestBlockHashResponse = self
-            .rpc
-            .request(
-                "getLatestBlockhash",
-                json::make_params!({"commitment": "finalized"}),
-            )
-            .await?;
-
-        let number = Some(result.context.slot);
-        let hash = Some(result.value.blockhash);
-        let header = LatestBlockInfo { number, hash };
+        let result = self.get_latest_blockhash().await?;
+        let header = LatestBlockInfo {
+            number: result.context.slot,
+            hash: result.value.blockhash,
+        };
         Ok(Some(header))
     }
 

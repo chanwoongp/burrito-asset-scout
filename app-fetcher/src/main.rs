@@ -44,8 +44,8 @@ async fn main() -> Result<()> {
         let res_block_header = provider.fetch_latest_block_info().await;
         match res_block_header {
             Ok(Some(block)) => {
-                let num = block.number.unwrap_or_default();
-                let hash = block.hash.unwrap_or_else(|| "<none>".to_string());
+                let num = block.number;
+                let hash = block.hash;
                 println!("Latest block ({}): number={}, hash={}", chain_str, num, hash);
             }
             Ok(None) => {
