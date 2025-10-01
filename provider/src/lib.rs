@@ -7,7 +7,7 @@ pub use types::{Chain, Config};
 pub use config::Providers;
 
 use anyhow::Result;
-use crate::types::BlockHeader;
+use crate::types::LatestBlockInfo;
 use async_trait::async_trait;
 
 pub fn new_provider(chain: Chain, providers: &Providers) -> Result<Box<dyn Rpc + Send + Sync>> {
@@ -29,6 +29,6 @@ pub fn new_provider(chain: Chain, providers: &Providers) -> Result<Box<dyn Rpc +
 
 #[async_trait]
 pub trait Rpc: Send + Sync {
-    async fn fetch_block_info(&self, block_number: u64) -> Result<Option<types::AnyBlock>>;
-    async fn fetch_latest_block_info(&self) -> Result<Option<BlockHeader>>;
+    async fn fetch_latest_block_info(&self) -> Result<Option<LatestBlockInfo>>;
+    async fn fetch_block_data(&self, block_number: u64) -> Result<Option<types::AnyBlockData>>;
 }

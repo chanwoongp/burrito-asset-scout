@@ -1,27 +1,26 @@
 use serde::Deserialize;
-use crate::types::IBlock;
+use crate::types::IBlockData;
 
 #[derive(Debug, Deserialize)]
-pub struct GetLatestBlockhashResponse {
+pub struct GetLatestBlockHashResponse {
     pub context: Context,
-    pub value: Value,
+    pub value: GetLatestBlockHashValue,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Context {
-    //#[serde(rename = "apiVersion")]
-    //pub api_version: Option<String>,
+    // #[serde(rename = "apiVersion")]
+    // pub api_version: Option<String>,
     pub slot: u64,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct Value {
+pub struct GetLatestBlockHashValue {
     pub blockhash: String,
-    //#[serde(rename = "lastValidBlockHeight")]
-    //pub last_valid_block_height: u64,
 }
 
-pub struct BlockMetadata {
+#[derive(Debug, Deserialize)]
+pub struct BlockHeader {
     pub block_height: u64,
     pub block_time: u64,
     pub blockhash: String,
@@ -29,14 +28,15 @@ pub struct BlockMetadata {
     pub previous_blockhash: String,
 }
 
+#[derive(Debug, Deserialize)]
 pub struct Transaction {
     pub block_time: u64,
     pub slot: u64,
 }
 
-pub struct Block;
+pub struct BlockData;
 
-impl IBlock for Block {
-    type BlockMetadata = BlockMetadata;
+impl IBlockData for BlockData {
+    type BlockHeader = BlockHeader;
     type Transaction = Transaction;
 }

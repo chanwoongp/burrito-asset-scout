@@ -43,39 +43,33 @@ impl Config {
     }
 }
 
-#[derive(Debug, Deserialize)]
-pub struct JsonRpcResponse<T> {
-    #[allow(unused)]
-    pub jsonrpc: Option<String>,
-    pub result: Option<T>,
-    pub error: Option<JsonRpcError>,
-    #[allow(unused)]
-    pub id: Option<serde_json::Value>,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct JsonRpcError {
-    pub code: i64,
-    pub message: String,
-}
-
 #[derive(Debug)]
-pub struct BlockHeader {
+pub struct LatestBlockInfo {
     pub number: Option<u64>,
     pub hash: Option<String>,
 }
 
-pub trait IBlock {
-    type BlockMetadata;
+pub enum AnyBlockHeader {
+    Ethereum(ethereum::BlockHeader),
+    Solana(solana::BlockHeader),
+}
+
+pub enum AnyTransaction {
+    Ethereum(ethereum::Transaction),
+    Solana(solana::Transaction),
+}
+
+pub trait IBlockData {
+    type BlockHeader;
     type Transaction;
 }
 
-pub struct Block<C: IBlock> {
-    pub metadata: C::BlockMetadata,
+pub struct BlockData<C: IBlockData> {
+    pub block_header: C::BlockHeader,
     pub transactions: Vec<C::Transaction>,
 }
 
-pub enum AnyBlock {
-    Ethereum(Block<ethereum::Block>),
-    Solana(Block<solana::Block>),
+pub enum AnyBlockData {
+    Ethereum(BlockData<ethereum::BlockData>),
+    Solana(BlockData<solana::BlockData>),
 }

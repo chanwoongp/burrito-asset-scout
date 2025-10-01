@@ -1,18 +1,19 @@
 use serde::Deserialize;
-use crate::types::IBlock;
+use crate::types::IBlockData;
 
-// Struct matching the JSON-RPC wire format from Ethereum nodes.
 #[derive(Debug, Deserialize)]
 pub struct GetBlockNumberResponse {
     pub number: Option<String>,
     pub hash: Option<String>,
 }
 
-pub struct BlockMetadata {
+#[derive(Debug, Deserialize)]
+pub struct BlockHeader {
     pub hash: String,
     pub number: u64,
 }
 
+#[derive(Debug, Deserialize)]
 pub struct Transaction {
     pub hash: String,
     pub block_number: u64,
@@ -21,9 +22,9 @@ pub struct Transaction {
     pub value: u64,
 }
 
-pub struct Block;
+pub struct BlockData;
 
-impl IBlock for Block {
-    type BlockMetadata = BlockMetadata;
+impl IBlockData for BlockData {
+    type BlockHeader = BlockHeader;
     type Transaction = Transaction;
 }

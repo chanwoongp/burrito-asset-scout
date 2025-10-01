@@ -56,15 +56,15 @@ async fn main() -> Result<()> {
             }
         }
 
-        let res_block_info = provider.fetch_block_info(100).await;
+        let res_block_info = provider.fetch_block_data(100).await;
         match res_block_info {
             Ok(Some(block)) => {
                 match block {
-                    provider::types::AnyBlock::Ethereum(b) => {
-                        println!("Block 100: {:?}", b.metadata.hash);
+                    provider::types::AnyBlockData::Ethereum(b) => {
+                        println!("Block 100: {:?}", b.block_header.hash);
                     }
-                    provider::types::AnyBlock::Solana(b) => {
-                        println!("Block 100: {:?}", b.metadata.blockhash);
+                    provider::types::AnyBlockData::Solana(b) => {
+                        println!("Block 100: {:?}", b.block_header.blockhash);
                     }
                 }
             }

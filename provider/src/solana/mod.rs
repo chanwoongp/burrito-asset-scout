@@ -1,10 +1,10 @@
 mod types;
 
-pub use types::{Block, BlockMetadata, Transaction};
+pub use types::{BlockData, BlockHeader, Transaction};
 
 use crate::Rpc;
-use crate::solana::types::GetLatestBlockhashResponse;
-use crate::types::{BlockHeader, Config};
+use crate::solana::types::GetLatestBlockHashResponse;
+use crate::types::{LatestBlockInfo, Config};
 use anyhow::Result;
 use async_trait::async_trait;
 use serde_json;
@@ -25,23 +25,8 @@ impl Solana {
 
 #[async_trait]
 impl Rpc for Solana {
-    async fn fetch_block_info(&self, _block_number: u64) -> Result<Option<crate::types::AnyBlock>> {
-        // FIXME
-        let block = crate::types::AnyBlock::Solana(crate::types::Block::<Block> {
-            metadata: BlockMetadata {
-                blockhash: "0x222".to_string(),
-                parent_lot: 0,
-                block_height: 222,
-                block_time: 0,
-                previous_blockhash: "".to_string(),
-            },
-            transactions: vec![],
-        });
-        Ok(Some(block))
-    }
-
-    async fn fetch_latest_block_info(&self) -> Result<Option<BlockHeader>> {
-        let result: GetLatestBlockhashResponse = self
+    async fn fetch_latest_block_info(&self) -> Result<Option<LatestBlockInfo>> {
+        let result: GetLatestBlockHashResponse = self
             .rpc
             .request(
                 "getLatestBlockhash",
@@ -51,7 +36,22 @@ impl Rpc for Solana {
 
         let number = Some(result.context.slot);
         let hash = Some(result.value.blockhash);
-        let header = BlockHeader { number, hash };
+        let header = LatestBlockInfo { number, hash };
         Ok(Some(header))
+    }
+
+    async fn fetch_block_data(&self, _block_number: u64) -> Result<Option<crate::types::AnyBlockData>> {
+        // FIXME
+        let block = crate::types::AnyBlockData::Solana(crate::types::BlockData::<BlockData> {
+            block_header: BlockHeader {
+                blockhash: "0x222".to_string(),
+                parent_lot: 0,
+                block_height: 222,
+                block_time: 0,
+                previous_blockhash: "".to_string(),
+            },
+            transactions: vec![],
+        });
+        Ok(Some(block))
     }
 }

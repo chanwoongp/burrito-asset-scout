@@ -1,10 +1,10 @@
 mod types;
 
-pub use types::{Block, BlockMetadata, Transaction};
+pub use types::{BlockData, BlockHeader, Transaction};
 
 use crate::Rpc;
 use crate::ethereum::types::GetBlockNumberResponse;
-use crate::types::{BlockHeader, Config};
+use crate::types::{LatestBlockInfo, Config};
 use anyhow::{Result, anyhow};
 use async_trait::async_trait;
 use utils::json;
@@ -29,19 +29,7 @@ fn parse_hex_u64(s: &str) -> Result<u64> {
 
 #[async_trait]
 impl Rpc for Ethereum {
-    async fn fetch_block_info(&self, _block_number: u64) -> Result<Option<crate::types::AnyBlock>> {
-        // FIXME
-        let block = crate::types::AnyBlock::Ethereum(crate::types::Block::<Block> {
-            metadata: BlockMetadata {
-                hash: "0x111".to_string(),
-                number: 111,
-            },
-            transactions: vec![],
-        });
-        Ok(Some(block))
-    }
-
-    async fn fetch_latest_block_info(&self) -> Result<Option<BlockHeader>> {
+    async fn fetch_latest_block_info(&self) -> Result<Option<LatestBlockInfo>> {
         let result: GetBlockNumberResponse = self
             .rpc
             .request("eth_getBlockByNumber", json::make_params!("latest", false))
@@ -51,10 +39,22 @@ impl Rpc for Ethereum {
             Some(s) => Some(parse_hex_u64(s)?),
             None => None,
         };
-        let header = BlockHeader {
+        let header = LatestBlockInfo {
             number,
             hash: result.hash,
         };
         Ok(Some(header))
+    }
+
+    async fn fetch_block_data(&self, _block_number: u64) -> Result<Option<crate::types::AnyBlockData>> {
+        // FIXME
+        let block = crate::types::AnyBlockData::Ethereum(crate::types::BlockData::<BlockData> {
+            block_header: BlockHeader {
+                hash: "0x111".to_string(),
+                number: 111,
+            },
+            transactions: vec![],
+        });
+        Ok(Some(block))
     }
 }
