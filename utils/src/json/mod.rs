@@ -51,3 +51,21 @@ impl JsonRpc {
         rpc.result.ok_or_else(|| anyhow!("No result in JSON-RPC response"))
     }
 }
+
+// pub fn build_request(params: serde_json::Value) -> serde_json::Value {
+//     serde_json::json!(params)
+// }
+//
+// #[macro_export]
+// macro_rules! rpc_request {
+//     ($($param:tt),* $(,)?) => {
+//         $crate::json::build_request(serde_json::json!([$($param),*]))
+//     };
+// }
+
+#[macro_export]
+macro_rules! make_params {
+    ($($param:tt),* $(,)?) => {
+        serde_json::json!([$($param),*])
+    };
+}

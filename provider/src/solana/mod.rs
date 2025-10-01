@@ -42,7 +42,7 @@ impl Rpc for Solana {
     async fn fetch_latest_block_info(&self) -> Result<Option<BlockHeader>> {
         let result: GetLatestBlockhashResponse = self.rpc.request(
             "getLatestBlockhash",
-            serde_json::json!({"commitment": "finalized"})
+            utils::make_params!({"commitment": "finalized"})
         ).await?;
 
         let number = Some(result.context.slot);
