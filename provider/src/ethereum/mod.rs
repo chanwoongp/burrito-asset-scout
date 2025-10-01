@@ -41,6 +41,16 @@ impl Ethereum {
             )
             .await?;
 
+        if let Some(transactions) = result.transactions.as_array() {
+            for tx in transactions {
+                if let Some(hash) = tx.get("hash").and_then(|h| h.as_str()) {
+                    println!("Transaction hash: {}", hash);
+                } else if let Some(hash) = tx.as_str() {
+                    println!("Transaction hash: {}", hash);
+                }
+            }
+        }
+
         Ok(result)
     }
 
