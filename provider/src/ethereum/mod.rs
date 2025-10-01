@@ -1,7 +1,6 @@
 mod models;
 mod types;
 
-use std::hash::Hash;
 pub use types::{BlockData, BlockHeader, Transaction};
 
 use crate::ethereum::models::{GetBlockByNumberResponse, GetTransactionByHashResponse};

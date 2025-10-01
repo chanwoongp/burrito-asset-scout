@@ -1,6 +1,6 @@
 use anyhow::Result;
 use clap::Parser;
-use provider::{Chain, new_provider};
+use provider::{new_provider, Chain};
 use std::str::FromStr;
 use std::time::Duration;
 
@@ -53,7 +53,7 @@ async fn main() -> Result<()> {
 
     loop {
         let res_latest_block_header = provider.fetch_latest_block_info().await;
-        let (block_number, block_hash) = match res_latest_block_header {
+        let (block_number, _block_hash) = match res_latest_block_header {
             Ok(Some(block)) => {
                 let num = block.number;
                 let hash = block.hash;
@@ -77,10 +77,16 @@ async fn main() -> Result<()> {
         match res_block_info {
             Ok(Some(block)) => match block {
                 provider::types::AnyBlockData::Ethereum(b) => {
-                    println!("Block ({}): number={}, hash={}", chain_str, b.block_header.number, b.block_header.hash);
+                    println!(
+                        "Block ({}): number={}, hash={}",
+                        chain_str, b.block_header.number, b.block_header.hash
+                    );
                 }
                 provider::types::AnyBlockData::Solana(b) => {
-                    println!("Block ({}): block_height={}, blockhash={}", chain_str, b.block_header.block_height, b.block_header.blockhash);
+                    println!(
+                        "Block ({}): block_height={}, blockhash={}",
+                        chain_str, b.block_header.block_height, b.block_header.blockhash
+                    );
                 }
             },
             Ok(None) => {
