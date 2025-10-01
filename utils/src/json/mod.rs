@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
@@ -48,20 +48,10 @@ impl JsonRpc {
             return Err(anyhow!("JSON-RPC error {}: {}", err.code, err.message));
         }
 
-        rpc.result.ok_or_else(|| anyhow!("No result in JSON-RPC response"))
+        rpc.result
+            .ok_or_else(|| anyhow!("No result in JSON-RPC response"))
     }
 }
-
-// pub fn build_request(params: serde_json::Value) -> serde_json::Value {
-//     serde_json::json!(params)
-// }
-//
-// #[macro_export]
-// macro_rules! rpc_request {
-//     ($($param:tt),* $(,)?) => {
-//         $crate::json::build_request(serde_json::json!([$($param),*]))
-//     };
-// }
 
 #[macro_export]
 macro_rules! make_params {
@@ -69,3 +59,5 @@ macro_rules! make_params {
         serde_json::json!([$($param),*])
     };
 }
+
+pub use make_params;

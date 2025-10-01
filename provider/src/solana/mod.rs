@@ -1,13 +1,14 @@
 mod types;
 
-pub use types::{BlockMetadata, Transaction, Block};
+pub use types::{Block, BlockMetadata, Transaction};
 
-use anyhow::Result;
-use serde_json;
-use crate::solana::types::GetLatestBlockhashResponse;
 use crate::Rpc;
+use crate::solana::types::GetLatestBlockhashResponse;
 use crate::types::{BlockHeader, Config};
+use anyhow::Result;
 use async_trait::async_trait;
+use serde_json;
+use utils::json;
 use utils::json::JsonRpc;
 
 #[derive(Debug)]
@@ -40,10 +41,13 @@ impl Rpc for Solana {
     }
 
     async fn fetch_latest_block_info(&self) -> Result<Option<BlockHeader>> {
-        let result: GetLatestBlockhashResponse = self.rpc.request(
-            "getLatestBlockhash",
-            utils::make_params!({"commitment": "finalized"})
-        ).await?;
+        let result: GetLatestBlockhashResponse = self
+            .rpc
+            .request(
+                "getLatestBlockhash",
+                json::make_params!({"commitment": "finalized"}),
+            )
+            .await?;
 
         let number = Some(result.context.slot);
         let hash = Some(result.value.blockhash);
@@ -51,4 +55,3 @@ impl Rpc for Solana {
         Ok(Some(header))
     }
 }
-
