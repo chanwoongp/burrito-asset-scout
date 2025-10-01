@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 
 #[derive(Serialize, Deserialize)]
 pub struct GetBlockByNumberResponse {
@@ -36,7 +35,7 @@ pub struct GetBlockByNumberResponse {
     #[serde(rename = "stateRoot")]
     pub state_root: String,
     pub timestamp: String,
-    pub transactions: Value,
+    pub transactions: Vec<GetTransactionByHashResponse>,
     #[serde(rename = "transactionsRoot")]
     pub transactions_root: String,
 }
