@@ -41,8 +41,8 @@ async fn main() -> Result<()> {
     };
 
     loop {
-        let res_block_header = provider.fetch_latest_block_info().await;
-        match res_block_header {
+        let res_latest_block_header = provider.fetch_latest_block_info().await;
+        match res_latest_block_header {
             Ok(Some(block)) => {
                 let num = block.number;
                 let hash = block.hash;
@@ -56,7 +56,7 @@ async fn main() -> Result<()> {
             }
         }
 
-        let res_block_info = provider.fetch_block_data(100).await;
+        let res_block_info = provider.fetch_block_data(res_latest_block_header.unwrap().number).await;
         match res_block_info {
             Ok(Some(block)) => {
                 match block {

@@ -9,7 +9,7 @@ use anyhow::{Result, anyhow};
 use async_trait::async_trait;
 use utils::json;
 use utils::json::JsonRpc;
-use crate::ethereum::models::GetBlockByNumberResponse;
+use crate::ethereum::models::{GetBlockByNumberResponse, GetTransactionByHashResponse};
 
 #[derive(Debug)]
 pub struct Ethereum {
@@ -34,6 +34,14 @@ impl Ethereum {
             .await?;
         Ok(result)
     }
+
+    async fn _get_transaction_by_hash(&self, transaction_hash: String) -> Result<GetTransactionByHashResponse>{
+        let result: GetTransactionByHashResponse = self
+            .rpc
+            .request("eth_getTransactionByHash", json::make_params!(transaction_hash))
+            .await?;
+        Ok(result)
+    }
 }
 
 fn parse_hex_u64(s: &str) -> Result<u64> {
@@ -52,13 +60,13 @@ impl Rpc for Ethereum {
         Ok(Some(header))
     }
 
-    async fn fetch_block_data(&self, _block_number: u64) -> Result<Option<crate::types::AnyBlockData>> {
-        // FIXME
+    async fn fetch_block_data(&self, block_number: u64) -> Result<Option<crate::types::AnyBlockData>> {
+        let result = self.get_block_by_number(block_number, true).await?;
         let block = crate::types::AnyBlockData::Ethereum(crate::types::BlockData::<BlockData> {
             block_header: BlockHeader {
-                hash: "0x111".to_string(),
-                parent_hash: "".to_string(),
-                number: 111,
+                hash: result.hash,
+                parent_hash: result.parent_hash,
+                number: result.number.parse()?,
             },
             transactions: vec![],
         });

@@ -35,7 +35,39 @@ pub struct GetBlockByNumberResponse {
     #[serde(rename = "stateRoot")]
     pub state_root: String,
     pub timestamp: String,
-    pub transactions: Vec<String>,
+    pub transactions: Vec<GetTransactionByHashResponse>,
     #[serde(rename = "transactionsRoot")]
     pub transactions_root: String,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct GetTransactionByHashResponse {
+    #[serde(rename = "blockHash")]
+    pub block_hash: String,
+    #[serde(rename = "blockNumber")]
+    pub block_number: String,
+    pub from: String,
+    pub gas: String,
+    #[serde(rename = "gasPrice")]
+    pub gas_price: String,
+    #[serde(rename = "maxPriorityFeePerGas")]
+    pub max_priority_fee_per_gas: String,
+    #[serde(rename = "maxFeePerGas")]
+    pub max_fee_per_gas: String,
+    pub hash: String,
+    pub input: String,
+    pub nonce: String,
+    pub to: String,
+    #[serde(rename = "transactionIndex")]
+    pub transaction_index: String,
+    pub value: String,
+    #[serde(rename = "type")]
+    pub r#type: String,
+    #[serde(rename = "chainId")]
+    pub chain_id: String,
+    pub v: String,
+    #[serde(rename = "yParity")]
+    pub y_parity: String,
+    pub r: String,
+    pub s: String,
 }
