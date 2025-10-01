@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
-pub struct BlockResponse {
+pub struct GetBlockByNumberResponse {
     #[serde(rename = "baseFeePerGas")]
     pub base_fee_per_gas: String,
     #[serde(rename = "blobGasUsed")]

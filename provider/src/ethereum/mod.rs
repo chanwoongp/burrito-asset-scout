@@ -9,7 +9,7 @@ use anyhow::{Result, anyhow};
 use async_trait::async_trait;
 use utils::json;
 use utils::json::JsonRpc;
-use crate::ethereum::models::BlockResponse;
+use crate::ethereum::models::GetBlockByNumberResponse;
 
 #[derive(Debug)]
 pub struct Ethereum {
@@ -22,13 +22,13 @@ impl Ethereum {
         Ok(Self { rpc })
     }
 
-    async fn get_block_by_number(&self, n: u64, include_transaction: bool) -> Result<BlockResponse>{
+    async fn get_block_by_number(&self, n: u64, include_transaction: bool) -> Result<GetBlockByNumberResponse>{
         let block_param = if n == 0 {
             "latest".to_string()
         } else {
             format!("0x{:x}", n)
         };
-        let result: BlockResponse = self
+        let result: GetBlockByNumberResponse = self
             .rpc
             .request("eth_getBlockByNumber", json::make_params!(block_param, include_transaction))
             .await?;
@@ -57,6 +57,7 @@ impl Rpc for Ethereum {
         let block = crate::types::AnyBlockData::Ethereum(crate::types::BlockData::<BlockData> {
             block_header: BlockHeader {
                 hash: "0x111".to_string(),
+                parent_hash: "".to_string(),
                 number: 111,
             },
             transactions: vec![],

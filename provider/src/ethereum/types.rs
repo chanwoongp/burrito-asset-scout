@@ -2,6 +2,7 @@ use crate::types::IBlockData;
 
 pub struct BlockHeader {
     pub hash: String,
+    pub parent_hash: String,
     pub number: u64,
 }
 
