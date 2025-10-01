@@ -32,7 +32,7 @@ async fn main() -> Result<()> {
         }
     };
 
-    let provider = match new_provider(chain, &fetcher_config.provider) {
+    let _provider = match new_provider(chain, &fetcher_config.provider) {
         Ok(v) => v,
         Err(e) => {
             eprintln!("{}", e);
@@ -41,21 +41,7 @@ async fn main() -> Result<()> {
     };
 
     loop {
-        let res = provider.fetch_latest_block_info().await;
-
-        match res {
-            Ok(Some(block)) => {
-                let num = block.number.unwrap_or_default();
-                let hash = block.hash.unwrap_or_else(|| "<none>".to_string());
-                println!("Latest block ({}): number={}, hash={}", chain, num, hash);
-            }
-            Ok(None) => {
-                eprintln!("No latest block returned by provider ({})", chain);
-            }
-            Err(e) => {
-                eprintln!("Error fetching latest block ({}): {e}", chain);
-            }
-        }
+        println!("Fetching latest block info...");
 
         tokio::time::sleep(Duration::from_secs(3)).await;
     }
