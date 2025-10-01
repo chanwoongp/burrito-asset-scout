@@ -1,9 +1,9 @@
-mod models;
+mod model;
 mod types;
 
 pub use types::{BlockData, BlockHeader, Transaction};
 
-use crate::ethereum::models::{GetBlockByNumberResponse, GetTransactionByHashResponse};
+use crate::ethereum::model::{GetBlockByNumberResponse, GetTransactionByHashResponse};
 use crate::types::{Config, LatestBlockInfo};
 use crate::Rpc;
 use anyhow::{anyhow, Result};
