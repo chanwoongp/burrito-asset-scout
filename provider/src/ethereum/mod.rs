@@ -3,23 +3,21 @@ mod types;
 pub use types::{BlockMetadata, Transaction, Block};
 
 use anyhow::{anyhow, Result};
-use reqwest::Client;
-use serde_json;
 use crate::ethereum::types::GetBlockNumberResponse;
-use crate::{Rpc};
-use crate::types::{BlockHeader, JsonRpcResponse, Config};
+use crate::Rpc;
+use crate::types::{BlockHeader, Config};
 use async_trait::async_trait;
+use utils::json::JsonRpc;
 
 #[derive(Debug)]
 pub struct Ethereum {
-    client: Client,
-    config: Config,
+    rpc: JsonRpc,
 }
 
 impl Ethereum {
     pub fn new(config: Config) -> Result<Self> {
-        let client = Client::builder().build()?;
-        Ok(Self { client, config })
+        let rpc = JsonRpc::new(config.endpoint)?;
+        Ok(Self { rpc })
     }
 }
 
@@ -44,28 +42,17 @@ impl Rpc for Ethereum {
     }
 
     async fn fetch_latest_block_info(&self) -> Result<Option<BlockHeader>> {
-        let body = utils::rpc_request!("eth_getBlockByNumber", "latest", false);
-        let resp = self.client.post(&self.config.endpoint).json(&body).send().await?;
-        if !resp.status().is_success() {
-            return Err(anyhow!("HTTP error: {}", resp.status()));
-        }
+        let result: GetBlockNumberResponse = self.rpc.request(
+            "eth_getBlockByNumber",
+            serde_json::json!(["latest", false])
+        ).await?;
 
-        let rpc: JsonRpcResponse<GetBlockNumberResponse> = resp.json().await?;
-        if let Some(err) = rpc.error {
-            return Err(anyhow!("JSON-RPC error {}: {}", err.code, err.message));
-        }
-
-        match rpc.result {
-            None => Ok(None),
-            Some(b) => {
-                let number = match b.number.as_deref() {
-                    Some(s) => Some(parse_hex_u64(s)?),
-                    None => None,
-                };
-                let header = BlockHeader { number, hash: b.hash };
-                Ok(Some(header))
-            }
-        }
+        let number = match result.number.as_deref() {
+            Some(s) => Some(parse_hex_u64(s)?),
+            None => None,
+        };
+        let header = BlockHeader { number, hash: result.hash };
+        Ok(Some(header))
     }
 }
 
