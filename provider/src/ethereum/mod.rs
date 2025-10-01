@@ -44,21 +44,13 @@ impl Rpc for Ethereum {
     }
 
     async fn fetch_latest_block_info(&self) -> Result<Option<BlockHeader>> {
-        let body = serde_json::json!({
-            "jsonrpc": "2.0",
-            "method": "eth_getBlockByNumber",
-            "params": ["latest", false],
-            "id": 0
-        });
-
+        let body = utils::rpc_request!("eth_getBlockByNumber", "latest", false);
         let resp = self.client.post(&self.config.endpoint).json(&body).send().await?;
-
         if !resp.status().is_success() {
             return Err(anyhow!("HTTP error: {}", resp.status()));
         }
 
         let rpc: JsonRpcResponse<GetBlockNumberResponse> = resp.json().await?;
-
         if let Some(err) = rpc.error {
             return Err(anyhow!("JSON-RPC error {}: {}", err.code, err.message));
         }
