@@ -1,13 +1,13 @@
+pub mod config;
 pub mod ethereum;
 pub mod solana;
 pub mod types;
-pub mod config;
 
-pub use types::{Chain, Config};
 pub use config::Providers;
+pub use types::{Chain, Config};
 
-use anyhow::Result;
 use crate::types::LatestBlockInfo;
+use anyhow::Result;
 use async_trait::async_trait;
 
 pub fn new_provider(chain: Chain, providers: &Providers) -> Result<Box<dyn Rpc + Send + Sync>> {

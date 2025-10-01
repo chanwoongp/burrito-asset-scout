@@ -1,15 +1,16 @@
-mod types;
 mod models;
+mod types;
 
+use std::hash::Hash;
 pub use types::{BlockData, BlockHeader, Transaction};
 
+use crate::ethereum::models::{GetBlockByNumberResponse, GetTransactionByHashResponse};
+use crate::types::{Config, LatestBlockInfo};
 use crate::Rpc;
-use crate::types::{LatestBlockInfo, Config};
-use anyhow::{Result, anyhow};
+use anyhow::{anyhow, Result};
 use async_trait::async_trait;
 use utils::json;
 use utils::json::JsonRpc;
-use crate::ethereum::models::{GetBlockByNumberResponse, GetTransactionByHashResponse};
 
 #[derive(Debug)]
 pub struct Ethereum {
@@ -22,7 +23,11 @@ impl Ethereum {
         Ok(Self { rpc })
     }
 
-    async fn get_block_by_number(&self, n: u64, include_transaction: bool) -> Result<GetBlockByNumberResponse>{
+    async fn get_block_by_number(
+        &self,
+        n: u64,
+        include_transaction: bool,
+    ) -> Result<GetBlockByNumberResponse> {
         let block_param = if n == 0 {
             "latest".to_string()
         } else {
@@ -30,15 +35,25 @@ impl Ethereum {
         };
         let result: GetBlockByNumberResponse = self
             .rpc
-            .request("eth_getBlockByNumber", json::make_params!(block_param, include_transaction))
+            .request(
+                "eth_getBlockByNumber",
+                json::make_params!(block_param, include_transaction),
+            )
             .await?;
+
         Ok(result)
     }
 
-    async fn _get_transaction_by_hash(&self, transaction_hash: String) -> Result<GetTransactionByHashResponse>{
+    async fn _get_transaction_by_hash(
+        &self,
+        transaction_hash: String,
+    ) -> Result<GetTransactionByHashResponse> {
         let result: GetTransactionByHashResponse = self
             .rpc
-            .request("eth_getTransactionByHash", json::make_params!(transaction_hash))
+            .request(
+                "eth_getTransactionByHash",
+                json::make_params!(transaction_hash),
+            )
             .await?;
         Ok(result)
     }
@@ -60,7 +75,10 @@ impl Rpc for Ethereum {
         Ok(Some(header))
     }
 
-    async fn fetch_block_data(&self, block_number: u64) -> Result<Option<crate::types::AnyBlockData>> {
+    async fn fetch_block_data(
+        &self,
+        block_number: u64,
+    ) -> Result<Option<crate::types::AnyBlockData>> {
         let result = self.get_block_by_number(block_number, true).await?;
         let block = crate::types::AnyBlockData::Ethereum(crate::types::BlockData::<BlockData> {
             block_header: BlockHeader {
