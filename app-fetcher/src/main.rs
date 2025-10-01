@@ -1,18 +1,29 @@
 use anyhow::Result;
-use provider::{new_provider, Chain};
+use clap::Parser;
+use provider::{Chain, new_provider};
 use std::str::FromStr;
 use std::time::Duration;
-use clap::Parser;
 
 mod config;
 
 #[derive(Debug, Parser)]
 #[command(name = "fetcher")]
 struct Cli {
-    #[arg(short, long, value_name = "CONFIG", help = "Configuration file path", required = true)]
+    #[arg(
+        short,
+        long,
+        value_name = "CONFIG",
+        help = "Configuration file path",
+        required = true
+    )]
     config: String,
 
-    #[arg(long, value_name = "CHAIN", help = "Blockchain to use (e.g., ethereum, solana)", required = true)]
+    #[arg(
+        long,
+        value_name = "CHAIN",
+        help = "Blockchain to use (e.g., ethereum, solana)",
+        required = true
+    )]
     chain: String,
 }
 
@@ -42,32 +53,36 @@ async fn main() -> Result<()> {
 
     loop {
         let res_latest_block_header = provider.fetch_latest_block_info().await;
-        match res_latest_block_header {
+        let (block_number, block_hash) = match res_latest_block_header {
             Ok(Some(block)) => {
                 let num = block.number;
                 let hash = block.hash;
-                println!("Latest block ({}): number={}, hash={}", chain_str, num, hash);
+                println!(
+                    "Latest block ({}): number={}, hash={}",
+                    chain_str, num, hash
+                );
+                (num, hash)
             }
             Ok(None) => {
                 eprintln!("No latest block returned by provider ({})", chain_str);
+                return Ok(());
             }
             Err(e) => {
                 eprintln!("Error fetching latest block ({}): {e}", chain_str);
+                return Ok(());
             }
-        }
+        };
 
-        let res_block_info = provider.fetch_block_data(res_latest_block_header.unwrap().number).await;
+        let res_block_info = provider.fetch_block_data(block_number).await;
         match res_block_info {
-            Ok(Some(block)) => {
-                match block {
-                    provider::types::AnyBlockData::Ethereum(b) => {
-                        println!("Block 100: {:?}", b.block_header.hash);
-                    }
-                    provider::types::AnyBlockData::Solana(b) => {
-                        println!("Block 100: {:?}", b.block_header.blockhash);
-                    }
+            Ok(Some(block)) => match block {
+                provider::types::AnyBlockData::Ethereum(b) => {
+                    println!("Block: {:?}", b);
                 }
-            }
+                provider::types::AnyBlockData::Solana(b) => {
+                    println!("Block: {:?}", b);
+                }
+            },
             Ok(None) => {
                 eprintln!("No block 100 returned by provider ({})", chain_str);
             }

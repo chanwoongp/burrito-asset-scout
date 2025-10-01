@@ -1,5 +1,6 @@
 use crate::types::IBlockData;
 
+#[derive(Debug)]
 pub struct BlockHeader {
     pub block_height: u64,
     pub block_time: u64,
@@ -8,11 +9,13 @@ pub struct BlockHeader {
     pub previous_blockhash: String,
 }
 
+#[derive(Debug)]
 pub struct Transaction {
     pub block_time: u64,
     pub slot: u64,
 }
 
+#[derive(Debug)]
 pub struct BlockData;
 
 impl IBlockData for BlockData {

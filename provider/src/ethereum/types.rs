@@ -1,11 +1,13 @@
 use crate::types::IBlockData;
 
+#[derive(Debug)]
 pub struct BlockHeader {
     pub hash: String,
     pub parent_hash: String,
     pub number: u64,
 }
 
+#[derive(Debug)]
 pub struct Transaction {
     pub hash: String,
     pub block_number: u64,
@@ -14,6 +16,7 @@ pub struct Transaction {
     pub value: u64,
 }
 
+#[derive(Debug)]
 pub struct BlockData;
 
 impl IBlockData for BlockData {

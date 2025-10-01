@@ -1,8 +1,8 @@
+use crate::{ethereum, solana};
+use anyhow::anyhow;
 use serde::Deserialize;
 use std::fmt;
 use std::str::FromStr;
-use anyhow::anyhow;
-use crate::{ethereum, solana};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -13,10 +13,14 @@ pub enum Chain {
 
 impl fmt::Display for Chain {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", match self {
-            Chain::Ethereum => "ethereum",
-            Chain::Solana => "solana",
-        })
+        write!(
+            f,
+            "{}",
+            match self {
+                Chain::Ethereum => "ethereum",
+                Chain::Solana => "solana",
+            }
+        )
     }
 }
 
@@ -64,6 +68,7 @@ pub trait IBlockData {
     type Transaction;
 }
 
+#[derive(Debug)]
 pub struct BlockData<C: IBlockData> {
     pub block_header: C::BlockHeader,
     pub transactions: Vec<C::Transaction>,
