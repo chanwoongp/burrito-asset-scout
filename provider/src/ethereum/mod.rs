@@ -44,7 +44,7 @@ impl Rpc for Ethereum {
     async fn fetch_latest_block_info(&self) -> Result<Option<BlockHeader>> {
         let result: GetBlockNumberResponse = self.rpc.request(
             "eth_getBlockByNumber",
-            utils::make_params!(["latest", false])
+            utils::make_params!("latest", false)
         ).await?;
 
         let number = match result.number.as_deref() {
