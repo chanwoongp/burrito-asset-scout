@@ -1,6 +1,13 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum Transactions {
+    Hashes(Vec<String>),
+    Full(Vec<GetTransactionByHashResponse>),
+}
+
+#[derive(Serialize, Deserialize)]
 pub struct GetBlockByNumberResponse {
     #[serde(rename = "baseFeePerGas")]
     pub base_fee_per_gas: Option<String>,
@@ -35,7 +42,7 @@ pub struct GetBlockByNumberResponse {
     #[serde(rename = "stateRoot")]
     pub state_root: String,
     pub timestamp: String,
-    pub transactions: Vec<GetTransactionByHashResponse>,
+    pub transactions: Transactions,
     #[serde(rename = "transactionsRoot")]
     pub transactions_root: String,
 }

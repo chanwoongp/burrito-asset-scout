@@ -3,7 +3,9 @@ mod types;
 
 pub use types::{BlockData, BlockHeader, Transaction};
 
-use crate::ethereum::model::{GetBlockByNumberResponse, GetTransactionByHashResponse};
+use crate::ethereum::model::{
+    GetBlockByNumberResponse, GetTransactionByHashResponse,
+};
 use crate::types::{Config, LatestBlockInfo};
 use crate::Rpc;
 use anyhow::{anyhow, Result};
@@ -39,10 +41,6 @@ impl Ethereum {
                 json::make_params!(block_param, include_transaction),
             )
             .await?;
-
-        for tx in &result.transactions {
-            println!("Transaction hash: {}", tx.hash);
-        }
 
         Ok(result)
     }
