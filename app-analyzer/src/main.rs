@@ -3,6 +3,7 @@ use provider::{new_provider, Chain};
 use std::str::FromStr;
 use std::time::Duration;
 use clap::Parser;
+use analyzer::{get_analyzer, AnalyzerType};
 
 mod config;
 
@@ -32,17 +33,21 @@ async fn main() -> Result<()> {
         }
     };
 
-    let _provider = match new_provider(chain, &fetcher_config.provider) {
-        Ok(v) => v,
-        Err(e) => {
-            eprintln!("{}", e);
-            return Ok(());
-        }
-    };
-
     loop {
         println!("Fetching latest block info...");
 
         tokio::time::sleep(Duration::from_secs(3)).await;
+
+        if let Some(analyzer) = get_analyzer(AnalyzerType::CoinTransfer, chain) {
+            analyzer.analyze();
+        } else {
+            eprintln!("No CoinTransfer analyzer available for chain: {:?}", chain);
+        }
+
+        if let Some(analyzer) = get_analyzer(AnalyzerType::TokenTransfer, chain) {
+            analyzer.analyze();
+        } else {
+            eprintln!("No TokenTransfer analyzer available for chain: {:?}", chain);
+        }
     }
 }
