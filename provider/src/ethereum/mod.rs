@@ -80,14 +80,45 @@ impl Rpc for Ethereum {
         &self,
         block_number: u64,
     ) -> Result<Option<crate::types::AnyBlockData>> {
+        use crate::ethereum::model::Transactions;
+
         let result = self.get_block_by_number(block_number, true).await?;
+
+        // Build block header
+        let header_number = parse_hex_u64(&result.number)?;
+        let header = BlockHeader {
+            hash: result.hash.clone(),
+            parent_hash: result.parent_hash.clone(),
+            number: header_number,
+        };
+
+        // Build transactions
+        // Since include_transaction=true was used, the RPC must return full transactions, not hashes.
+        let transactions: Vec<Transaction> = match result.transactions {
+            Transactions::Hashes(_) => {
+                return Err(anyhow!(
+                    "eth_getBlockByNumber returned only transaction hashes despite include_transaction=true"
+                ))
+            }
+            Transactions::Full(ref txs) => txs
+                .iter()
+                .map(|tx| Transaction {
+                    hash: tx.hash.clone(),
+                    block_number: tx
+                        .block_number
+                        .as_ref()
+                        .and_then(|s| parse_hex_u64(s).ok())
+                        .unwrap_or(header_number),
+                    from: tx.from.clone(),
+                    to: tx.to.clone().unwrap_or_default(),
+                    value: parse_hex_u64(&tx.value).unwrap_or(0),
+                })
+                .collect(),
+        };
+
         let block = crate::types::AnyBlockData::Ethereum(crate::types::BlockData::<BlockData> {
-            block_header: BlockHeader {
-                hash: result.hash,
-                parent_hash: result.parent_hash,
-                number: parse_hex_u64(&result.number)?,
-            },
-            transactions: vec![],
+            block_header: header,
+            transactions,
         });
         Ok(Some(block))
     }
