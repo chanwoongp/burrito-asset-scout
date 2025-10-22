@@ -1,7 +1,7 @@
 provider:
   ethereum:
     rpc:
-      url: "https://ethereum-mainnet.g.allthatnode.com/full/evm/cd69347a2bef449a96e00d2c38ae2f64"
+      url: "https://ethereum-rpc.publicnode.com"
   solana:
     rpc:
       url: "https://api.mainnet-beta.solana.com"

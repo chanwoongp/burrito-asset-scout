@@ -4,7 +4,7 @@ use std::str::FromStr;
 use std::time::Duration;
 use clap::Parser;
 use analyzer::{get_analyzer, AnalyzerType};
-use provider::types::{AnyBlockData, AnyBlockHeader, BlockData as GenericBlockData};
+use provider::types::{AnyBlockData, AnyBlockHeader};
 use provider::{ethereum, solana};
 
 mod config;
@@ -35,7 +35,7 @@ async fn main() -> Result<()> {
         }
     };
 
-    let _provider = match new_provider(chain, &fetcher_config.provider) {
+    let provider = match new_provider(chain, &fetcher_config.provider) {
         Ok(v) => v,
         Err(e) => {
             eprintln!("{}", e);
@@ -43,91 +43,63 @@ async fn main() -> Result<()> {
         }
     };
 
-    // Build per-chain test data outside the loop and reuse inside
-    let (ct_header, ct_data, tt_header, tt_data) = match chain {
-        Chain::Ethereum => {
-            let ct_header = AnyBlockHeader::Ethereum(ethereum::BlockHeader {
-                hash: "0xdeadbeef".to_string(),
-                parent_hash: "0xparent".to_string(),
-                number: 1,
-            });
-            let ct_data = AnyBlockData::Ethereum(GenericBlockData::<ethereum::BlockData> {
-                block_header: ethereum::BlockHeader {
-                    hash: "0xdeadbeef".to_string(),
-                    parent_hash: "0xparent".to_string(),
-                    number: 1,
-                },
-                transactions: vec![],
-            });
-            let tt_header = AnyBlockHeader::Ethereum(ethereum::BlockHeader {
-                hash: "0xdeadbeef".to_string(),
-                parent_hash: "0xparent".to_string(),
-                number: 2,
-            });
-            let tt_data = AnyBlockData::Ethereum(GenericBlockData::<ethereum::BlockData> {
-                block_header: ethereum::BlockHeader {
-                    hash: "0xdeadbeef".to_string(),
-                    parent_hash: "0xparent".to_string(),
-                    number: 2,
-                },
-                transactions: vec![],
-            });
-            (ct_header, ct_data, tt_header, tt_data)
-        }
-        Chain::Solana => {
-            let ct_header = AnyBlockHeader::Solana(solana::BlockHeader {
-                block_height: 222,
-                block_time: 0,
-                blockhash: "So11111111111111111111111111111111111111112".to_string(),
-                parent_lot: 0,
-                previous_blockhash: "So00000000000000000000000000000000000000000".to_string(),
-            });
-            let ct_data = AnyBlockData::Solana(GenericBlockData::<solana::BlockData> {
-                block_header: solana::BlockHeader {
-                    block_height: 222,
-                    block_time: 0,
-                    blockhash: "So11111111111111111111111111111111111111112".to_string(),
-                    parent_lot: 0,
-                    previous_blockhash: "So00000000000000000000000000000000000000000".to_string(),
-                },
-                transactions: vec![],
-            });
-            let tt_header = AnyBlockHeader::Solana(solana::BlockHeader {
-                block_height: 333,
-                block_time: 0,
-                blockhash: "So33333333333333333333333333333333333333333".to_string(),
-                parent_lot: 0,
-                previous_blockhash: "So22222222222222222222222222222222222222222".to_string(),
-            });
-            let tt_data = AnyBlockData::Solana(GenericBlockData::<solana::BlockData> {
-                block_header: solana::BlockHeader {
-                    block_height: 333,
-                    block_time: 0,
-                    blockhash: "So33333333333333333333333333333333333333333".to_string(),
-                    parent_lot: 0,
-                    previous_blockhash: "So22222222222222222222222222222222222222222".to_string(),
-                },
-                transactions: vec![],
-            });
-            (ct_header, ct_data, tt_header, tt_data)
-        }
-    };
-
     loop {
-        println!("Query data from database");
+        println!("Fetching latest block via provider for chain: {:?}", chain);
 
-        tokio::time::sleep(Duration::from_secs(3)).await;
+        match provider.fetch_latest_block_info().await {
+            Ok(Some(latest)) => {
+                match provider.fetch_block_data(latest.number).await {
+                    Ok(Some(block)) => {
+                        // Build a header enum from the fetched block data
+                        let header = match &block {
+                            AnyBlockData::Ethereum(d) => {
+                                let h = &d.block_header;
+                                AnyBlockHeader::Ethereum(ethereum::BlockHeader {
+                                    hash: h.hash.clone(),
+                                    parent_hash: h.parent_hash.clone(),
+                                    number: h.number,
+                                })
+                            }
+                            AnyBlockData::Solana(d) => {
+                                let h = &d.block_header;
+                                AnyBlockHeader::Solana(solana::BlockHeader {
+                                    block_height: h.block_height,
+                                    block_time: h.block_time,
+                                    blockhash: h.blockhash.clone(),
+                                    parent_lot: h.parent_lot,
+                                    previous_blockhash: h.previous_blockhash.clone(),
+                                })
+                            }
+                        };
 
-        if let Some(analyzer) = get_analyzer(AnalyzerType::CoinTransfer, chain) {
-            analyzer.analyze(&ct_header, &ct_data);
-        } else {
-            eprintln!("No CoinTransfer analyzer available for chain: {:?}", chain);
+                        if let Some(analyzer) = get_analyzer(AnalyzerType::CoinTransfer, chain) {
+                            analyzer.analyze(&header, &block);
+                        } else {
+                            eprintln!("No CoinTransfer analyzer available for chain: {:?}", chain);
+                        }
+
+                        if let Some(analyzer) = get_analyzer(AnalyzerType::TokenTransfer, chain) {
+                            analyzer.analyze(&header, &block);
+                        } else {
+                            eprintln!("No TokenTransfer analyzer available for chain: {:?}", chain);
+                        }
+                    }
+                    Ok(None) => {
+                        eprintln!("No block data returned for block number {}", latest.number);
+                    }
+                    Err(e) => {
+                        eprintln!("Error fetching block data: {}", e);
+                    }
+                }
+            }
+            Ok(None) => {
+                eprintln!("No latest block info available");
+            }
+            Err(e) => {
+                eprintln!("Error fetching latest block info: {}", e);
+            }
         }
 
-        if let Some(analyzer) = get_analyzer(AnalyzerType::TokenTransfer, chain) {
-            analyzer.analyze(&tt_header, &tt_data);
-        } else {
-            eprintln!("No TokenTransfer analyzer available for chain: {:?}", chain);
-        }
+        tokio::time::sleep(Duration::from_secs(10)).await;
     }
 }
