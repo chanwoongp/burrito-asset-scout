@@ -4,7 +4,7 @@ use provider::types::{AnyBlockData, AnyBlockHeader};
 pub struct EthereumTokenTransfer;
 
 impl Analyzer for EthereumTokenTransfer {
-    fn analyze(&self, header: AnyBlockHeader, data: AnyBlockData) {
+    fn analyze(&self, header: &AnyBlockHeader, data: &AnyBlockData) {
         if let (AnyBlockHeader::Ethereum(h), AnyBlockData::Ethereum(d)) = (header, data) {
             println!(
                 "ethereum token transfer analyzer: block #{}, hash {} (txs: {})",

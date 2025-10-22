@@ -5,7 +5,7 @@ use provider::ethereum;
 pub struct EthereumCoinTransfer;
 
 impl Analyzer for EthereumCoinTransfer {
-    fn analyze(&self, header: AnyBlockHeader, data: AnyBlockData) {
+    fn analyze(&self, header: &AnyBlockHeader, data: &AnyBlockData) {
         if let (AnyBlockHeader::Ethereum(h), AnyBlockData::Ethereum(d)) = (header, data) {
             println!(
                 "ethereum coin transfer analyzer: block #{}, hash {} (txs: {})",

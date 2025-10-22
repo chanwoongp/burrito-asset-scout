@@ -9,7 +9,7 @@ use token_transfer::ethereum::EthereumTokenTransfer;
 use token_transfer::solana::SolanaTokenTransfer;
 
 pub trait Analyzer {
-    fn analyze(&self, header: AnyBlockHeader, data: AnyBlockData);
+    fn analyze(&self, header: &AnyBlockHeader, data: &AnyBlockData);
 }
 
 pub enum AnalyzerType {

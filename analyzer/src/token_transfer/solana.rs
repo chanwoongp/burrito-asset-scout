@@ -4,7 +4,7 @@ use provider::types::{AnyBlockData, AnyBlockHeader};
 pub struct SolanaTokenTransfer;
 
 impl Analyzer for SolanaTokenTransfer {
-    fn analyze(&self, header: AnyBlockHeader, data: AnyBlockData) {
+    fn analyze(&self, header: &AnyBlockHeader, data: &AnyBlockData) {
         if let (AnyBlockHeader::Solana(h), AnyBlockData::Solana(d)) = (header, data) {
             println!(
                 "solana token transfer analyzer: blockhash {}, height {} (txs: {})",

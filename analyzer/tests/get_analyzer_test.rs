@@ -31,7 +31,7 @@ fn test_get_analyzer() {
                     },
                     transactions: vec![],
                 });
-                analyzer.analyze(header, data);
+                analyzer.analyze(&header, &data);
             }
             Chain::Solana => {
                 let header = AnyBlockHeader::Solana(solana::BlockHeader {
@@ -51,7 +51,7 @@ fn test_get_analyzer() {
                     },
                     transactions: vec![],
                 });
-                analyzer.analyze(header, data);
+                analyzer.analyze(&header, &data);
             }
         }
     }
