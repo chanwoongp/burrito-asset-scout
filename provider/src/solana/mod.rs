@@ -70,9 +70,26 @@ impl Rpc for Solana {
         &self,
         block_number: u64,
     ) -> Result<Option<crate::types::AnyBlockData>> {
-        let block = self.get_block(block_number).await?;
+        let result = self.get_block(block_number).await?;
+        // Map each raw transaction entry to our minimal Transaction type
+        let transactions: Vec<Transaction> = result
+            .transactions
+            .iter()
+            .map(|_| Transaction {
+                block_time: result.block_time as u64,
+                slot: block_number,
+            })
+            .collect();
+
         let block = crate::types::AnyBlockData::Solana(crate::types::BlockData::<BlockData> {
-            // TODO
+            block_header: BlockHeader {
+                block_height: result.block_height as u64,
+                block_time: result.block_time as u64,
+                blockhash: result.blockhash,
+                parent_lot: result.parent_slot as u64,
+                previous_blockhash: result.previous_blockhash,
+            },
+            transactions,
         });
         Ok(Some(block))
     }
