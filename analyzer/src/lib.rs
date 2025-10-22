@@ -1,5 +1,6 @@
 pub mod coin_transfer;
 pub mod token_transfer;
+mod types;
 
 use provider::Chain;
 use provider::types::AnyBlockData;

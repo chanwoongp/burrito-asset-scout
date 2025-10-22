@@ -52,14 +52,10 @@ async fn main() -> Result<()> {
 
                         if let Some(analyzer) = get_analyzer(AnalyzerType::CoinTransfer, chain) {
                             analyzer.analyze(&block);
-                        } else {
-                            eprintln!("No CoinTransfer analyzer available for chain: {:?}", chain);
                         }
 
                         if let Some(analyzer) = get_analyzer(AnalyzerType::TokenTransfer, chain) {
                             analyzer.analyze(&block);
-                        } else {
-                            eprintln!("No TokenTransfer analyzer available for chain: {:?}", chain);
                         }
                     }
                     Ok(None) => {
