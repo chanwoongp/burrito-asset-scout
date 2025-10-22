@@ -4,8 +4,6 @@ use std::str::FromStr;
 use std::time::Duration;
 use clap::Parser;
 use analyzer::{get_analyzer, AnalyzerType};
-use provider::types::{AnyBlockData, AnyBlockHeader};
-use provider::{ethereum, solana};
 
 mod config;
 
@@ -50,36 +48,16 @@ async fn main() -> Result<()> {
             Ok(Some(latest)) => {
                 match provider.fetch_block_data(latest.number).await {
                     Ok(Some(block)) => {
-                        // Build a header enum from the fetched block data
-                        let header = match &block {
-                            AnyBlockData::Ethereum(d) => {
-                                let h = &d.block_header;
-                                AnyBlockHeader::Ethereum(ethereum::BlockHeader {
-                                    hash: h.hash.clone(),
-                                    parent_hash: h.parent_hash.clone(),
-                                    number: h.number,
-                                })
-                            }
-                            AnyBlockData::Solana(d) => {
-                                let h = &d.block_header;
-                                AnyBlockHeader::Solana(solana::BlockHeader {
-                                    block_height: h.block_height,
-                                    block_time: h.block_time,
-                                    blockhash: h.blockhash.clone(),
-                                    parent_lot: h.parent_lot,
-                                    previous_blockhash: h.previous_blockhash.clone(),
-                                })
-                            }
-                        };
+                        // TODO: chaining
 
                         if let Some(analyzer) = get_analyzer(AnalyzerType::CoinTransfer, chain) {
-                            analyzer.analyze(&header, &block);
+                            analyzer.analyze(&block);
                         } else {
                             eprintln!("No CoinTransfer analyzer available for chain: {:?}", chain);
                         }
 
                         if let Some(analyzer) = get_analyzer(AnalyzerType::TokenTransfer, chain) {
-                            analyzer.analyze(&header, &block);
+                            analyzer.analyze(&block);
                         } else {
                             eprintln!("No TokenTransfer analyzer available for chain: {:?}", chain);
                         }

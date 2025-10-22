@@ -2,14 +2,14 @@ pub mod coin_transfer;
 pub mod token_transfer;
 
 use provider::Chain;
-use provider::types::{AnyBlockData, AnyBlockHeader};
+use provider::types::AnyBlockData;
 use coin_transfer::ethereum::EthereumCoinTransfer;
 use coin_transfer::solana::SolanaCoinTransfer;
 use token_transfer::ethereum::EthereumTokenTransfer;
 use token_transfer::solana::SolanaTokenTransfer;
 
 pub trait Analyzer {
-    fn analyze(&self, header: &AnyBlockHeader, data: &AnyBlockData);
+    fn analyze(&self, data: &AnyBlockData);
 }
 
 pub enum AnalyzerType {

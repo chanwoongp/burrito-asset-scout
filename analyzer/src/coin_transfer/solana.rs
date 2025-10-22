@@ -1,11 +1,12 @@
 use crate::Analyzer;
-use provider::types::{AnyBlockData, AnyBlockHeader};
+use provider::types::AnyBlockData;
 
 pub struct SolanaCoinTransfer;
 
 impl Analyzer for SolanaCoinTransfer {
-    fn analyze(&self, header: &AnyBlockHeader, data: &AnyBlockData) {
-        if let (AnyBlockHeader::Solana(h), AnyBlockData::Solana(d)) = (header, data) {
+    fn analyze(&self, data: &AnyBlockData) {
+        if let AnyBlockData::Solana(d) = data {
+            let h = &d.block_header;
             println!(
                 "solana coin transfer analyzer: blockhash {}, height {} (txs: {})",
                 h.blockhash,

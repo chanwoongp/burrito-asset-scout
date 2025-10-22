@@ -1,11 +1,12 @@
 use crate::Analyzer;
-use provider::types::{AnyBlockData, AnyBlockHeader};
+use provider::types::AnyBlockData;
 
 pub struct EthereumTokenTransfer;
 
 impl Analyzer for EthereumTokenTransfer {
-    fn analyze(&self, header: &AnyBlockHeader, data: &AnyBlockData) {
-        if let (AnyBlockHeader::Ethereum(h), AnyBlockData::Ethereum(d)) = (header, data) {
+    fn analyze(&self, data: &AnyBlockData) {
+        if let AnyBlockData::Ethereum(d) = data {
+            let h = &d.block_header;
             println!(
                 "ethereum token transfer analyzer: block #{}, hash {} (txs: {})",
                 h.number,
