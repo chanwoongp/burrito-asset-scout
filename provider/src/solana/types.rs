@@ -18,6 +18,7 @@ pub struct Transaction {
 #[derive(Debug)]
 pub struct BlockData;
 
+// FIXME
 impl IBlockData for BlockData {
     type BlockHeader = BlockHeader;
     type Transaction = Transaction;

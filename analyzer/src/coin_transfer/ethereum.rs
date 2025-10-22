@@ -13,6 +13,11 @@ impl Analyzer for EthereumCoinTransfer {
                 h.hash,
                 d.transactions.len()
             );
+            for t in &d.transactions {
+                if t.value > 0 {
+                    println!("transfers: {}->{} : {}", t.from, t.to, t.value);
+                }
+            }
         } else {
             eprintln!("EthereumCoinTransfer received non-ethereum data");
         }
