@@ -64,7 +64,7 @@ struct GetBlockResponseTransaction {
 }
 
 #[derive(Serialize, Deserialize)]
-struct GetBlockResponse {
+pub(crate) struct GetBlockResponse {
     #[serde(rename = "blockHeight")]
     pub block_height: i64,
     #[serde(rename = "blockTime")]
