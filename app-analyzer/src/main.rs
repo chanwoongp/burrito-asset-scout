@@ -35,6 +35,14 @@ async fn main() -> Result<()> {
         }
     };
 
+    let _provider = match new_provider(chain, &fetcher_config.provider) {
+        Ok(v) => v,
+        Err(e) => {
+            eprintln!("{}", e);
+            return Ok(());
+        }
+    };
+
     // Build per-chain test data outside the loop and reuse inside
     let (ct_header, ct_data, tt_header, tt_data) = match chain {
         Chain::Ethereum => {
